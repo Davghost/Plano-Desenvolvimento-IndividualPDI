@@ -17,7 +17,39 @@ model User {
   email      String   @unique
   password   String
   role       Role     @default(user)
+  pdiItems PdiItem[]
   created_at DateTime @default(now())
 
   @@map("users")
+}
+
+enum Theme {
+  PROGRAMACAO
+  MATEMATICA
+  INGLES
+  SOFT_SKILLS
+  OPORTUNIDADES_ACADEMICAS
+}
+
+enum CheckPeriod {
+  SEMANAL
+  QUINZENAL
+  MENSAL
+  BIMESTRAL
+}
+
+model PdiItem {
+  id Int @id @default(autoincrement())
+
+  theme     String
+  objective String
+  why       String
+  how       String
+  period    CheckPeriod
+  who       String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, theme])
 }
