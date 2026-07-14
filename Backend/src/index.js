@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import dotenv from 'dotenv'
+=======
+import "dotenv/config"
+>>>>>>> origin/dev/victor-userPDI
 import express from "express"
 import authRoutes from "./routes/authRoutes.js"
+import PDIRoutes from "./routes/PDIRoutes.js"
 
 const app = express()
 const PORT = 3000
@@ -8,7 +13,7 @@ const PORT = 3000
 app.use(express.json())
 
 app.use("/auth", authRoutes)
-
+app.use("/pdi", PDIRoutes);
 
 app.get('/', (req, res) => {
     res.json({
