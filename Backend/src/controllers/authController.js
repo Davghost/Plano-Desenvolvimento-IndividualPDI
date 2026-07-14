@@ -37,7 +37,7 @@ export async function loginController(req, res){
         })
     }catch(error){
         if(error.message==="INVALID_CREDENTIALS"){
-            return res.send(401).json({
+            return res.status(401).json({
                 error: "Credenciais inválidas"
             })
         }

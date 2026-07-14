@@ -51,7 +51,7 @@ export async function login(data){
         )
     }
 
-    const passwordMatches = bcrypt.compare(user.password, password)
+    const passwordMatches = await bcrypt.compare(password, user.password)
 
     if(!passwordMatches){
         throw new Error(
@@ -64,7 +64,7 @@ export async function login(data){
     const safeUser = {
         id: user.id,
         name: user.name,
-        email: user.normalizedEmail,
+        email: user.email,
         role: user.role,
         created_at: user.created_at
     }

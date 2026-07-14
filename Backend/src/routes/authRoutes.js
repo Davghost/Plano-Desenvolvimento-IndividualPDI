@@ -5,8 +5,8 @@ import { validate } from "../middlewares/validateMiddlewares.js"
 
 const router = express.Router()
 
-router.post("/register", registerController, validate(registerSchema))
+router.post("/register", validate(registerSchema), registerController)
 
-router.post("/login", loginController, validate(loginSchema))
+router.post("/login", validate(loginSchema), loginController)
 
 export default router
