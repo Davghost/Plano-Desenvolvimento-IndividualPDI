@@ -43,5 +43,12 @@ export async function onlyUsers(req, res, next){
             error: "Acesso restrito a usuários comuns"
         })
     }
-    next()
+    next();
 }
+
+export async function adminOnly(req, res, next){
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: "Acesso restrito a administradores" });
+    }
+    next();
+};

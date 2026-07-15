@@ -23,3 +23,39 @@ export async function getUsersPaginated(page = 1, limit = 8) {
         currentPage: page
     };
 }
+
+export async function getAllUsersFiltered(filters = {}) {
+    const { id, name, turma } = filters;
+
+    const where = { role: "user" };
+
+    if (id !== undefined) {
+        where.id = id;
+    }
+
+    if (name !== undefined) {
+        where.name = { contains: name};
+    }
+
+    if (turma !== undefined) {
+        where.turma = { contains: turma};
+    }
+
+    const users = await prisma.user.findMany({
+        where,
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            turma: true,
+            role: true,
+            pdiItems: true
+        },
+        orderBy: { id: 'asc' }
+    });
+
+    return {
+        users,
+        total: users.length
+    };
+}
