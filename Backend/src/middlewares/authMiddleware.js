@@ -30,7 +30,7 @@ export function authMiddleware(req, res, next){
     }
 }
 
-export async function onlyUsers(req, res, next){
+export function onlyUsers(req, res, next){
     
     if(!req.user){
         return res.status(401).json({
@@ -45,3 +45,10 @@ export async function onlyUsers(req, res, next){
     }
     next()
 }
+
+export function adminOnly(req, res, next) {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: "Acesso restrito a administradores" });
+    }
+    next();
+};

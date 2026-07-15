@@ -1,6 +1,32 @@
 import  prisma  from "../lib/prisma.js"
 import { registerPDISchema, updatePDISchema } from "../validators/PDIValidator.js"
 
+const PDI_THEMES = [
+    "PROGRAMACAO",
+    "MATEMATICA",
+    "INGLES",
+    "SOFT_SKILLS",
+    "OPORTUNIDADES_ACADEMICAS"
+]
+
+function buildFullPdiItems(items, userId) {
+    const itemMap = new Map(items.map(item => [item.theme, item]))
+
+    return PDI_THEMES.map(theme => {
+        const item = itemMap.get(theme)
+        return {
+            id: item?.id ?? null,
+            userId: item?.userId ?? userId,
+            theme,
+            objective: item?.objective ?? "",
+            why: item?.why ?? "",
+            how: item?.how ?? "",
+            period: item?.period ?? null,
+            who: item?.who ?? ""
+        }
+    })
+}
+
 export async function RegisterPDIService(id_user, data) {
 	const parsed = registerPDISchema.safeParse(data)
 	if (!parsed.success) {
@@ -118,7 +144,7 @@ export async function UpdatePDIService(id_user, items) {
 export async function GetPDIService(id_user) {
     try {
         const items = await prisma.pdiItem.findMany({ where: { userId: id_user } })
-        return { success: true, pdiItems: items }
+        return { success: true, pdiItems: buildFullPdiItems(items, id_user) }
     } catch (err) {
         throw new Error(err.message)
     }
