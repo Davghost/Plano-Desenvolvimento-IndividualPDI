@@ -20,14 +20,14 @@ export const pdiItemSchema = z.object({
 export const registerPDISchema = z.object({
   pdiItems: z.array(pdiItemSchema).min(1, "Deve haver pelo menos um item PDI")
 }).refine(
-    (data) => {
-        const themes = data.pdiItems.map(item => item.themes)
-        return themes.length === new Set(themes).size
-    },
-    {
-        message: "Não é permitido ter temas duplicados no PDI",
-        path: ["pdiItems"]
-    }
+  (data) => {
+    const themes = data.pdiItems.map(item => item.theme)
+    return themes.length === new Set(themes).size
+  },
+  {
+    message: "Não é permitido ter temas duplicados no PDI",
+    path: ["pdiItems"]
+  }
 )
 
 export const updatePDISchema = pdiItemSchema
