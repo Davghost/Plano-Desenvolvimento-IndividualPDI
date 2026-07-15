@@ -3,7 +3,7 @@ import prisma from "../lib/prisma.js"
 import { generateToken } from "../utils/jwt.js"
 
 export async function register(data) {
-    const {name, email, password} = data
+    const {name, email, turma, password} = data
 
     const normalizedEmail = email.toLowerCase().trim()
 
@@ -20,6 +20,7 @@ export async function register(data) {
         data:{
             name,
             email: normalizedEmail,
+            turma,
             password: hashedPassword,
             role: "user"
         },
@@ -27,6 +28,7 @@ export async function register(data) {
             id:true,
             name:true,
             email:true,
+            turma: true,
             role: true,
             created_at: true
         }
@@ -65,6 +67,7 @@ export async function login(data){
         id: user.id,
         name: user.name,
         email: user.email,
+        turma: user.turma,
         role: user.role,
         created_at: user.created_at
     }

@@ -49,6 +49,7 @@ export async function RegisterPDIService(id_user, data) {
 						userId: id_user
 					}
 				})
+                created.push(res)
 
 			} catch (err) {
 				errors.push({ theme: item.theme, message: err.message })
