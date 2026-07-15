@@ -1,10 +1,12 @@
-import { prisma } from "../lib/prisma.js"
+import  prisma  from "../lib/prisma.js"
 import { registerPDISchema, updatePDISchema } from "../validators/PDIValidator.js"
 
 export async function RegisterPDIService(id_user, data) {
 	try {
 
+        //retorna {sucess: boolean, data: {...}}
 		const parsed = registerPDISchema.safeParse(data)
+
 		if (!parsed.success) {
 			const messages = parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(' | ')
 			throw new Error(`Dados inválidos: ${messages}`)
@@ -40,16 +42,20 @@ export async function RegisterPDIService(id_user, data) {
 					}
 				})
 
-				created.push(res)
 			} catch (err) {
 				errors.push({ theme: item.theme, message: err.message })
 			}
+
 		}
 
 		return { success: true, created, errors: errors.length ? errors : undefined }
+        console.log(created)
+        console.log("funcionou")
+        console.log(errors)
 	} catch (err) {
 		throw new Error(err.message)
 	}
+
 }
 
 export async function UpdatePDIService(id_user, items) {

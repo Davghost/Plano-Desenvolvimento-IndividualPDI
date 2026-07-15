@@ -21,7 +21,7 @@ export const registerPDISchema = z.object({
   pdiItems: z.array(pdiItemSchema).min(1, "Deve haver pelo menos um item PDI")
 }).refine(
     (data) => {
-        const themes = data.pdiItems.map(item => item.themes)
+        const themes = data.pdiItems.map(item => item.theme)
         return themes.length === new Set(themes).size
     },
     {
@@ -31,3 +31,9 @@ export const registerPDISchema = z.object({
 )
 
 export const updatePDISchema = pdiItemSchema
+    .omit({ theme: true })
+    .partial()
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        { message: "Envie ao menos um campo para atualizar" }
+    )
