@@ -3,6 +3,7 @@ import express from "express"
 import cors from "cors"
 import authRoutes from "./routes/authRoutes.js"
 import PDIRoutes from "./routes/PDIRoutes.js"
+import adminRoutes from "./routes/adminRoutes.js"
 
 const app = express()
 const PORT = 3000
@@ -12,6 +13,7 @@ app.use(cors())
 
 app.use("/auth", authRoutes)
 app.use("/pdi", PDIRoutes);
+app.use("/admin", adminRoutes);
 
 app.get('/', (req, res) => {
     res.json({

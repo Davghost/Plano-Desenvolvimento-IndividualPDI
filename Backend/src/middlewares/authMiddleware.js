@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import prisma from "../lib/prisma.js"
 
 export function authMiddleware(req, res, next){
     const authHeader = req.headers.authorization
@@ -27,4 +28,20 @@ export function authMiddleware(req, res, next){
             error: "Token inválido"
         })
     }
+}
+
+export async function onlyUsers(req, res, next){
+    
+    if(!req.user){
+        return res.status(401).json({
+            error: "Usuário não autenticado"
+        })
+    }
+
+    if(req.user.role !== "user"){
+        return res.status(403).json({
+            error: "Acesso restrito a usuários comuns"
+        })
+    }
+    next()
 }
