@@ -38,14 +38,14 @@
           <label>Who</label>
           <input v-model="row.who" required />
         </div>
-        <div style="margin-top:6px;"><button type="button" @click="removeRow(idx)">Remover</button></div>
+        <div style="margin-top:6px;"><button type="button" :disabled="rows.length === 1" @click="removeRow(idx)">Remover</button></div>
       </div>
 
       <div>
         <button type="button" @click="addRow">Adicionar outro tema</button>
       </div>
 
-      <div style="margin-top:12px;"><button type="submit">Salvar PDIs</button></div>
+      <div style="margin-top:12px;"><button type="submit" :disabled="saving">{{ saving ? 'Salvando...' : 'Salvar PDIs' }}</button></div>
     </form>
 
     <div v-if="msg" style="margin-top:12px;color:green">{{ msg }}</div>
@@ -65,10 +65,12 @@ export default {
     ])
     const msg = ref('')
     const error = ref('')
+    const saving = ref(false)
     const router = useRouter()
 
     function addRow(){
-      rows.value.push({ theme: 'PROGRAMACAO', objective: '', why: '', how: '', period: 'SEMANAL', who: '' })
+      const availableTheme = themes.find(theme => !rows.value.some(row => row.theme === theme))
+      if (availableTheme) rows.value.push({ theme: availableTheme, objective: '', why: '', how: '', period: 'SEMANAL', who: '' })
     }
     function removeRow(i){
       rows.value.splice(i,1)
@@ -77,17 +79,25 @@ export default {
     async function handleSubmit(){
       msg.value = ''
       error.value = ''
+      if (new Set(rows.value.map(row => row.theme)).size !== rows.value.length) {
+        error.value = 'Cada item deve ter um tema diferente.'
+        return
+      }
+      saving.value = true
       try{
         const payload = { pdiItems: rows.value }
         const res = await api.post('/pdi/register', payload)
-        msg.value = res.data.message || 'PDIs salvos com sucesso'
         router.push('/pdi')
       }catch(err){
         error.value = err.response?.data?.error || err.message
+      }finally {
+        saving.value = false
       }
     }
 
-    return { rows, addRow, removeRow, handleSubmit, msg, error }
+    const themes = ['PROGRAMACAO', 'MATEMATICA', 'INGLES', 'SOFT_SKILLS', 'OPORTUNIDADES_ACADEMICAS']
+
+    return { rows, addRow, removeRow, handleSubmit, msg, error, saving }
   }
 }
 </script>

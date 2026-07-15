@@ -62,12 +62,33 @@ async function importUsers() {
     }
 }
 
+async function createAdminUser(){
+    const password_hash = await bcrypt.hash("123456", 10)
+    await prisma.user.create({
+        data: {
+            name: "Bruno",
+            email: "bruno.admin@gmail.com",
+            password: password_hash,
+            turma: "Monitor",
+            role: "admin"
+        }
+    });
+}
 
-importUsers()
+createAdminUser()
     .then(() => {
         console.log("Importação concluída!");
     })
     .catch(console.error)
     .finally(async () => {
         await prisma.$disconnect();
-    });
+   });
+
+//importUsers()
+//    .then(() => {
+//        console.log("Importação concluída!");
+//    })
+//    .catch(console.error)
+//    .finally(async () => {
+//        await prisma.$disconnect();
+//   });

@@ -19,6 +19,10 @@ export function setAuthToken(token){
   }
 }
 
+export function isAuthenticated(){
+  return Boolean(localStorage.getItem('pdi_token'))
+}
+
 // restore token if exists
 const existing = localStorage.getItem('pdi_token')
 if(existing) setAuthToken(existing)
