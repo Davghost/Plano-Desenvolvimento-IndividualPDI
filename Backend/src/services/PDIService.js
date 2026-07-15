@@ -89,7 +89,7 @@ export async function UpdatePDIService(id_user, items) {
                 where: {
                     userId_theme: {
                         userId: id_user,
-                        theme: item.theme
+                        theme: item.data.theme
                     }
                 }
             })
@@ -105,7 +105,7 @@ export async function UpdatePDIService(id_user, items) {
 
             updated.push(res)
         } catch (err) {
-            errors.push({ theme: item.theme, message: err.message })
+            errors.push({ theme: item.data?.theme, message: err.message })
         }
     }
 

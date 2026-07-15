@@ -2,7 +2,7 @@ import express from "express"
 
 import {authMiddleware} from "../middlewares/authMiddleware.js"
 import { RegisterPDIController,  UpdatePDIController, GetMePDIController } from "../controllers/PDIController.js";
-import { validate } from "../middlewares/validateMiddlewares.js"
+
 
 const router = express.Router()
 
@@ -12,7 +12,7 @@ router.get("/me", GetMePDIController);
 
 router.post("/register",  RegisterPDIController);
 
-router.put("/update/:theme",  UpdatePDIController);
+router.put("/update",  UpdatePDIController);
 
 
 export default router

@@ -17,15 +17,7 @@ export async function RegisterPDIController(req, res) {
 }
 
 export async function UpdatePDIController(req, res) {
-    const { theme } = req.params;
-    const id_user = req.user?.sub; 
-
-    if (!theme) {
-        return res.status(400).json({
-            error: "O parâmetro 'theme' é obrigatório.",
-            success: false
-        });
-    }
+    const id_user = req.user?.sub;
 
     if (!id_user) {
         return res.status(401).json({
@@ -34,9 +26,9 @@ export async function UpdatePDIController(req, res) {
         });
     }
 
-    const result = await UpdatePDIService(id_user, [
-        { theme, data: req.body }
-    ]);
+    const bodyItems = Array.isArray(req.body) ? req.body : [req.body];
+
+    const result = await UpdatePDIService(id_user, bodyItems.map(data => ({ data })));
 
     if (!result.success) {
         return res.status(400).json({
@@ -48,7 +40,7 @@ export async function UpdatePDIController(req, res) {
 
     return res.status(200).json({
         success: true,
-        data: result.updated[0]
+        data: result.updated
     });
 }
 
