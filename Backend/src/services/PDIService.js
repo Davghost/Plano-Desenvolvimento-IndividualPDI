@@ -2,6 +2,14 @@ import  prisma  from "../lib/prisma.js"
 import { registerPDISchema, updatePDISchema } from "../validators/PDIValidator.js"
 
 export async function RegisterPDIService(id_user, data) {
+	const parsed = registerPDISchema.safeParse(data)
+	if (!parsed.success) {
+		const messages = parsed.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(' | ')
+		const validationError = new Error(`Dados inválidos: ${messages}`)
+		validationError.statusCode = 400
+		throw validationError
+	}
+
 	try {
 
         //retorna {sucess: boolean, data: {...}}
@@ -69,7 +77,7 @@ export async function UpdatePDIService(id_user, items) {
             // valida os dados de atualização desse item específico
             const parsed = updatePDISchema.safeParse(item.data)
             if (!parsed.success) {
-                const messages = parsed.error.errors
+                const messages = parsed.error.issues
                     .map(e => `${e.path.join('.')}: ${e.message}`)
                     .join(' | ')
                 throw new Error(`Dados inválidos: ${messages}`)
