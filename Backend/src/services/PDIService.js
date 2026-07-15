@@ -74,9 +74,12 @@ export async function UpdatePDIService(id_user, items) {
     const errors = []
 
     for (const item of items) {
+
         try {
             // valida os dados de atualização desse item específico
             const parsed = updatePDISchema.safeParse(item.data)
+			console.log("parsed")
+			console.log(parsed)
             if (!parsed.success) {
                 const messages = parsed.error.issues
                     .map(e => `${e.path.join('.')}: ${e.message}`)

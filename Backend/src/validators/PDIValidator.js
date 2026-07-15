@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 export const pdiItemSchema = z.object({
+    
   theme: z.enum(
     ["PROGRAMACAO", "MATEMATICA", "INGLES", "SOFT_SKILLS", "OPORTUNIDADES_ACADEMICAS"],
     {
@@ -8,6 +9,7 @@ export const pdiItemSchema = z.object({
         message: "Tema inválido. Temas disponíveis: PROGRAMACAO, MATEMATICA, INGLES, SOFT_SKILLS, OPORTUNIDADES_ACADEMICAS" 
     })
     }),
+
   objective: z.string().min(5, "Objetivo deve ter no mínimo 5 caracteres"),
   why: z.string().min(5, "Justificativa deve ter no mínimo 5 caracteres"),
   how: z.string().min(5, "Metodologia deve ter no mínimo 5 caracteres"),
