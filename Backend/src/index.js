@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import dotenv from 'dotenv'
-=======
 import "dotenv/config"
->>>>>>> origin/dev/victor-userPDI
 import express from "express"
 import authRoutes from "./routes/authRoutes.js"
 import PDIRoutes from "./routes/PDIRoutes.js"

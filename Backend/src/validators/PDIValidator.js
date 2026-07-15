@@ -1,0 +1,33 @@
+import { z } from "zod"
+
+export const pdiItemSchema = z.object({
+  theme: z.enum(
+    ["PROGRAMACAO", "MATEMATICA", "INGLES", "SOFT_SKILLS", "OPORTUNIDADES_ACADEMICAS"],
+    {
+    errorMap: () => ({ 
+        message: "Tema inválido. Temas disponíveis: PROGRAMACAO, MATEMATICA, INGLES, SOFT_SKILLS, OPORTUNIDADES_ACADEMICAS" 
+    })
+    }),
+  objective: z.string().min(5, "Objetivo deve ter no mínimo 5 caracteres"),
+  why: z.string().min(5, "Justificativa deve ter no mínimo 5 caracteres"),
+  how: z.string().min(5, "Metodologia deve ter no mínimo 5 caracteres"),
+  period: z.enum(["SEMANAL", "QUINZENAL", "MENSAL", "BIMESTRAL"], {
+    errorMap: () => ({ message: "Período inválido. Períodos disponíveis: SEMANAL, QUINZENAL, MENSAL, BIMESTRAL" })
+  }),
+  who: z.string().min(3, "Responsável deve ter no mínimo 3 caracteres")
+})
+
+export const registerPDISchema = z.object({
+  pdiItems: z.array(pdiItemSchema).min(1, "Deve haver pelo menos um item PDI")
+}).refine(
+    (data) => {
+        const themes = data.pdiItems.map(item => item.themes)
+        return themes.length === new Set(themes).size
+    },
+    {
+        message: "Não é permitido ter temas duplicados no PDI",
+        path: ["pdiItems"]
+    }
+)
+
+export const updatePDISchema = pdiItemSchema

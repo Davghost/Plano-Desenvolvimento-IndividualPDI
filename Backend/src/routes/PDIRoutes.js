@@ -6,12 +6,11 @@ import { RegisterPDIController,  UpdatePDIController, GetMePDIController } from 
 const router = express.Router()
 router.use(authMiddleware);
 
-
-router.get("get/me", GetMePDIController);
+router.get("/me", GetMePDIController);
 
 router.post("/register", RegisterPDIController);
 
-router.put("/update/:id", UpdatePDIController);
+router.put("/update/:theme", UpdatePDIController);
 
 
 export default router
