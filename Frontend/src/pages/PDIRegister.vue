@@ -42,10 +42,10 @@
       </div>
 
       <div>
-        <button type="button" @click="addRow">Adicionar outro tema</button>
+        <button type="button" :disabled="rows.length === themes.length" @click="addRow">Adicionar outro tema</button>
       </div>
 
-      <div style="margin-top:12px;"><button type="submit" :disabled="saving">{{ saving ? 'Salvando...' : 'Salvar PDIs' }}</button></div>
+      <div style="margin-top:12px;"><button type="submit" :disabled="saving || rows.length === 0">{{ saving ? 'Salvando...' : 'Salvar PDIs' }}</button></div>
     </form>
 
     <div v-if="msg" style="margin-top:12px;color:green">{{ msg }}</div>
@@ -55,14 +55,12 @@
 
 <script>
 import api from '../services/api'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
   setup(){
-    const rows = ref([
-      { theme: 'PROGRAMACAO', objective: '', why: '', how: '', period: 'SEMANAL', who: '' }
-    ])
+    const rows = ref([])
     const msg = ref('')
     const error = ref('')
     const saving = ref(false)
@@ -97,7 +95,20 @@ export default {
 
     const themes = ['PROGRAMACAO', 'MATEMATICA', 'INGLES', 'SOFT_SKILLS', 'OPORTUNIDADES_ACADEMICAS']
 
-    return { rows, addRow, removeRow, handleSubmit, msg, error, saving }
+    onMounted(async () => {
+      try {
+        const { data } = await api.get('/pdi/me')
+        const existing = data.pdiItems || []
+        rows.value = existing
+          .filter(item => !item.id)
+          .map(item => ({ theme: item.theme, objective: '', why: '', how: '', period: 'SEMANAL', who: '' }))
+        if (!rows.value.length) msg.value = 'Todos os temas já foram preenchidos. Você pode editá-los na lista.'
+      } catch (err) {
+        error.value = err.response?.data?.error || 'Não foi possível carregar os temas disponíveis.'
+      }
+    })
+
+    return { rows, themes, addRow, removeRow, handleSubmit, msg, error, saving }
   }
 }
 </script>

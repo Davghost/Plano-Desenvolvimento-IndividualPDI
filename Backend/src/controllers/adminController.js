@@ -2,8 +2,20 @@ import { getAllUsersFiltered, getUserPDI} from '../services/adminService.js';
 
 export async function GetAllUsersFilter(req, res) {
     try {
-        const { id, name, turma } = req.query;
+        const { id, name, turma, pages } = req.query;
         const filters = {};
+        let page = 1;
+
+        if (pages !== undefined) {
+            const parsedPage = Number(pages);
+            if (!Number.isInteger(parsedPage) || parsedPage < 1) {
+                return res.status(400).json({
+                    error: "O campo 'pages' deve ser um número inteiro maior que zero",
+                    success: false
+                });
+            }
+            page = parsedPage;
+        }
 
         if (id !== undefined) {
             const parsedId = Number(id);
@@ -36,7 +48,7 @@ export async function GetAllUsersFilter(req, res) {
             filters.turma = turma.trim();
         }
 
-        const result = await getAllUsersFiltered(filters);
+        const result = await getAllUsersFiltered(filters, page);
 
         if (result.total === 0) {
             return res.status(200).json({

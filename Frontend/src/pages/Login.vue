@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import api, { setAuthToken } from '../services/api'
+import api, { setAuthToken, setCurrentUser } from '../services/api'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -32,9 +32,11 @@ export default {
       error.value = ''
       try{
         const res = await api.post('/auth/login', { email: email.value, password: password.value })
-        const token = res.data.token
+        const { token, safeUser } = res.data
+        if (!token || !safeUser) throw new Error('Resposta de autenticação inválida.')
         setAuthToken(token)
-        router.push('/pdi')
+        setCurrentUser(safeUser)
+        router.push(safeUser.role === 'admin' ? '/admin' : '/pdi')
       }catch(err){
         error.value = err.response?.data?.error || err.message
       }
