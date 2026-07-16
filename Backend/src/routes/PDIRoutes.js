@@ -8,12 +8,14 @@ import { pdiItemSchema, registerPDISchema, updatePDISchema } from "../validators
 const router = express.Router()
 
 router.use(authMiddleware);
+router.use(onlyUsers);
 
-router.get("/me", authMiddleware, onlyUsers, GetMePDIController);
 
-router.post("/register", authMiddleware, onlyUsers, validate(registerPDISchema), RegisterPDIController);
+router.get("/me", GetMePDIController);
 
-router.put("/update", authMiddleware, onlyUsers, validate(updatePDISchema), UpdatePDIController);
+router.post("/register",  RegisterPDIController);
+
+router.put("/update",  UpdatePDIController);
 
 
 export default router

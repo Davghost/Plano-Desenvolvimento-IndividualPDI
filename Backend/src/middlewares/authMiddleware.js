@@ -43,10 +43,10 @@ export function onlyUsers(req, res, next){
             error: "Acesso restrito a usuários comuns"
         })
     }
-    next()
+    next();
 }
 
-export function adminOnly(req, res, next) {
+export function adminOnly(req, res, next){
     if (req.user.role !== 'admin') {
         return res.status(403).json({ error: "Acesso restrito a administradores" });
     }
