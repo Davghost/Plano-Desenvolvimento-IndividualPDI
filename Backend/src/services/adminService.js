@@ -50,10 +50,12 @@ export async function getUsersPaginated(page = 1, limit = 8) {
     };
 }
 
-export async function getAllUsersFiltered(filters = {}) {
+export async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
     const { id, name, turma } = filters;
 
     const where = { role: "user" };
+
+    const skip = (page - 1) * limit;
 
     if (id !== undefined) {
         where.id = id;
@@ -67,21 +69,28 @@ export async function getAllUsersFiltered(filters = {}) {
         where.turma = { contains: turma};
     }
 
-    const users = await prisma.user.findMany({
-        where,
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            turma: true,
-            role: true,
-            pdiItems: true
-        },
-        orderBy: { id: 'asc' }
-    });
+    const [users, total] = await Promise.all([
+        prisma.user.findMany({
+            where,
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                turma: true,
+                role: true,
+                pdiItems: true
+            },
+            skip,
+            take: limit,
+            orderBy: { id: 'asc' }
+        }),
+        prisma.user.count({
+            where
+        })
+    ]);
 
     return {
         users,
-        total: users.length
-    };
-}
+        total
+    };  
+};
