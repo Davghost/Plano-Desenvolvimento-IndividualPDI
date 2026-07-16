@@ -21,6 +21,7 @@ model User {
   pdiItems PdiItem[]
   created_at DateTime @default(now())
 
+  deviceTokens DeviceToken[]
   @@map("users")
 }
 
@@ -53,4 +54,14 @@ model PdiItem {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, theme])
+}
+
+model DeviceToken {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  platform  String   // "web" | "android" | "ios"
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
