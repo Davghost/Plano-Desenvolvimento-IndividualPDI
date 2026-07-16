@@ -26,30 +26,6 @@ function buildFullPdiItems(items, userId) {
     })
 }
 
-export async function getUsersPaginated(page = 1, limit = 8) {
-    const skip = (page - 1) * limit;
-    
-    const [users, total] = await Promise.all([
-        prisma.user.findMany({
-            where: { role: "user" },
-            include: { pdiItems: true },
-            skip,
-            take: limit,
-            orderBy: { id: 'asc' }
-        }),
-        prisma.user.count({
-            where: { role: "user" }
-        })
-    ]);
-
-    return {
-        users,
-        total,
-        totalPages: Math.ceil(total / limit),
-        currentPage: page
-    };
-}
-
 export async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
     const { id, name, turma } = filters;
 
@@ -78,7 +54,6 @@ export async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
                 email: true,
                 turma: true,
                 role: true,
-                pdiItems: true
             },
             skip,
             take: limit,
@@ -94,3 +69,22 @@ export async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
         total
     };  
 };
+
+export async function getUserPDI(userId) {
+    const [user_data, items] = await Promise.all([
+        prisma.user.findUnique({
+            where: {id: userId},
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                turma: true,
+            }
+        }),
+        prisma.pdiItem.findMany({
+            where: { userId },
+            orderBy: { theme: 'asc' }
+        })
+    ]);
+    return [user_data, buildFullPdiItems(items, userId)];
+}

@@ -1,17 +1,4 @@
-import { getUsersPaginated, getAllUsersFiltered} from '../services/adminService.js';
-
-export async function getAllUsersController(req, res) {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 8;
-        
-        const result = await getUsersPaginated(page, limit);
-        
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ error: "Erro ao buscar usuários" });
-    }
-}
+import { getAllUsersFiltered, getUserPDI} from '../services/adminService.js';
 
 export async function GetAllUsersFilter(req, res) {
     try {
@@ -68,5 +55,20 @@ export async function GetAllUsersFilter(req, res) {
             error: "Falha ao buscar usuários",
             success: false
         });
+    }
+}
+
+export async function getUserPDIController(req, res) {
+    try {
+        const userId = parseInt(req.params.userId);
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: "ID de usuário inválido",success: false });
+        }
+
+        const pdiItems = await getUserPDI(userId);
+        res.json(pdiItems);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao buscar PDI do usuário" });
     }
 }
