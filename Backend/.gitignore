@@ -4,3 +4,5 @@ node_modules
 .http
 dev.db
 pdifire.json
+pdi-webpush-firebase-adminsdk-fbsvc-7b089b7e33.json
+dev.db

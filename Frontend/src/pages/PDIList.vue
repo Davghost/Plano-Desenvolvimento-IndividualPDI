@@ -3,6 +3,9 @@
     <h2>Meus PDIs</h2>
     <div class="pdi-list-actions">
       <router-link to="/pdi/register">Preencher temas do PDI</router-link>
+
+      <EnableNotificationsButton />
+
       <button type="button" @click="logout">Sair</button>
     </div>
 
@@ -38,8 +41,14 @@
 import api, { clearSession } from '../services/api'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import EnableNotificationsButton from "@/components/EnableNotificationsButton.vue";
 
 export default {
+
+  components:{
+    EnableNotificationsButton
+  },
+
   setup(){
     const pdiItems = ref([])
     const loading = ref(true)
