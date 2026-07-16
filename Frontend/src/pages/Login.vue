@@ -1,18 +1,41 @@
 <template>
-  <div style="max-width:400px;margin:40px auto;">
-    <h2>Login</h2>
-    <form @submit.prevent="handleLogin">
-      <div>
-        <label>Email</label>
-        <input v-model="email" type="email" required />
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-header">
+        <h1>PDI</h1>
+        <p>Plano de Desenvolvimento Individual</p>
       </div>
-      <div>
-        <label>Senha</label>
-        <input v-model="password" type="password" required />
-      </div>
-      <button type="submit">Entrar</button>
-    </form>
-    <p v-if="error" style="color:red">{{ error }}</p>
+      
+      <form @submit.prevent="handleLogin" class="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            id="email"
+            v-model="email" 
+            type="email" 
+            placeholder="seu@email.com"
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input 
+            id="password"
+            v-model="password" 
+            type="password" 
+            placeholder="••••••••"
+            required 
+          />
+        </div>
+
+        <button type="submit" class="login-button" :disabled="loading">
+          {{ loading ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </form>
+
+      <p v-if="error" class="error-message">{{ error }}</p>
+    </div>
   </div>
 </template>
 
@@ -26,10 +49,12 @@ export default {
     const email = ref('')
     const password = ref('')
     const error = ref('')
+    const loading = ref(false)
     const router = useRouter()
 
     async function handleLogin(){
       error.value = ''
+      loading.value = true
       try{
         const res = await api.post('/auth/login', { email: email.value, password: password.value })
         const { token, safeUser } = res.data
@@ -39,10 +64,11 @@ export default {
         router.push(safeUser.role === 'admin' ? '/admin' : '/pdi')
       }catch(err){
         error.value = err.response?.data?.error || err.message
+      }finally{
+        loading.value = false
       }
     }
 
-    return { email, password, handleLogin, error }
+    return { email, password, handleLogin, error, loading }
   }
-}
-</script>
+}</script>

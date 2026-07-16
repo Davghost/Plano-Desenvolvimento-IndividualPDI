@@ -1,0 +1,25 @@
+/* ========================================
+   STYLESHEET PRINCIPAL
+   ======================================== */
+
+/* Base */
+@import url('./base/variables.css');
+@import url('./base/reset.css');
+@import url('./base/typography.css');
+
+/* Components */
+@import url('./components/button.css');
+@import url('./components/form.css');
+@import url('./components/card.css');
+@import url('./components/table.css');
+@import url('./components/input.css');
+
+/* Utilities */
+@import url('./utilities/animations.css');
+
+/* Pages */
+@import url('./pages/login.css');
+@import url('./pages/admin-users.css');
+@import url('./pages/pdi-list.css');
+@import url('./pages/pdi-register.css');
+@import url('./pages/pdi-update.css');

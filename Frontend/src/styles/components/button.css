@@ -1,0 +1,124 @@
+/* ========================================
+   BOTÕES
+   ======================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+  gap: var(--spacing-sm);
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-bg-secondary);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primary-light);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+/* Primary */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-color: transparent;
+  color: var(--color-text-inverse);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(23, 105, 194, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+/* Secondary */
+.btn-secondary {
+  background: var(--color-bg-primary);
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-secondary);
+  }
+}
+
+/* Text */
+.btn-text {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+
+  &:hover:not(:disabled) {
+    background: transparent;
+    text-decoration: underline;
+  }
+}
+
+/* Danger */
+.btn-danger {
+  background: var(--color-error);
+  border-color: transparent;
+  color: var(--color-text-inverse);
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+}
+
+/* Size: Small */
+.btn-sm {
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+}
+
+/* Size: Large */
+.btn-lg {
+  padding: 12px 18px;
+  font-size: var(--font-size-lg);
+}
+
+/* Full Width */
+.btn-full {
+  width: 100%;
+}
+
+/* Details Button (Admin) */
+.details-button {
+  border: 0;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  padding: var(--spacing-sm);
+  white-space: nowrap;
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
