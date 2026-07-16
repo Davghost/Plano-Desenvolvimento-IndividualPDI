@@ -84,9 +84,7 @@ async function RegisterPDIService(id_user, data) {
 		}
 
 		return { success: true, created, errors: errors.length ? errors : undefined }
-        console.log(created)
-        console.log("funcionou")
-        console.log(errors)
+   
 	} catch (err) {
 		throw new Error(err.message)
 	}
@@ -104,8 +102,7 @@ async function UpdatePDIService(id_user, items) {
         try {
             // valida os dados de atualização desse item específico
             const parsed = PdiSchemas.updatePDISchema.safeParse(item.data)
-			console.log("parsed")
-			console.log(parsed)
+
             if (!parsed.success) {
                 const messages = parsed.error.issues
                     .map(e => `${e.path.join('.')}: ${e.message}`)

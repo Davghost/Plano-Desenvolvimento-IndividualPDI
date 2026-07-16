@@ -28,10 +28,7 @@ async function UpdatePDIController(req, res) {
 
     const bodyItems = Array.isArray(req.body) ? req.body : [req.body];
 
-    console.log(bodyItems.map(data => ({ data })));
-
     const result = await PdiService.UpdatePDIService(id_user, bodyItems.map(data => ({ data })));
-    console.log(result)
 
     if (!result.success) {
         return res.status(400).json({
@@ -57,7 +54,7 @@ async function GetMePDIController(req, res) {
     }
     try {
         const response = await PdiService.GetPDIService(user_id);
-        console.log(response)
+
 
         return res.status(200).json({
             success: true,

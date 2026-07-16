@@ -62,7 +62,7 @@ async function GetAllUsersFilter(req, res) {
         return res.status(200).json({ ...result, success: true });
     }
     catch (error) {
-        console.log(error.message);
+        console.log(error);
         return res.status(500).json({
             error: "Falha ao buscar usuários",
             success: false

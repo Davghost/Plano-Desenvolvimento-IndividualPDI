@@ -18,7 +18,8 @@ model User {
   turma      String
   password   String
   role       Role     @default(user)
-  pdiItems PdiItem[]
+  pdiItems   PdiItem[]
+  notifications Notification[]
   created_at DateTime @default(now())
 
   @@map("users")
@@ -53,4 +54,16 @@ model PdiItem {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, theme])
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  link       String
+  message    String
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  expiresAt  DateTime
+
+  @@map("notifications")
 }
