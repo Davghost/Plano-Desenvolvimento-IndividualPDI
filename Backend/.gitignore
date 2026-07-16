@@ -3,3 +3,4 @@ node_modules
 .env
 .http
 dev.db
+pdifire.json

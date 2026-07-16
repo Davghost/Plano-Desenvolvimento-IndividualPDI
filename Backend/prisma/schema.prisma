@@ -20,6 +20,7 @@ model User {
   role       Role     @default(user)
   pdiItems   PdiItem[]
   notifications Notification[]
+  deviceTokens DeviceToken[]
   created_at DateTime @default(now())
 
   @@map("users")
@@ -66,4 +67,14 @@ model Notification {
   expiresAt  DateTime
 
   @@map("notifications")
+}
+
+model DeviceToken {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  platform  String   // "web" | "android" | "ios"
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
