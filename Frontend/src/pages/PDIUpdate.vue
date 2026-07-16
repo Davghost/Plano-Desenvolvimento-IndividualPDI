@@ -62,7 +62,7 @@ export default {
       loading.value = true
       error.value = ''
       try{
-        const res = await api.get('/pdi/me')
+        const res = await api.get('/user/pdi/me')
         const arr = res.data.pdiItems || []
         const currentItem = arr.find(pdi => pdi.theme === props.theme)
         if (currentItem) {
@@ -82,7 +82,7 @@ export default {
       saving.value = true
       try{
         const payload = { theme: props.theme, objective: item.value.objective, why: item.value.why, how: item.value.how, period: item.value.period, who: item.value.who }
-        await api.put('/pdi/update', payload)
+        await api.put('/user/pdi/update', payload)
         router.push('/pdi')
       }catch(err){
         error.value = err.response?.data?.error || err.message

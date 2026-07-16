@@ -87,7 +87,7 @@ export default {
       saving.value = true
       try{
         const payload = { pdiItems: rows.value }
-        const res = await api.post('/pdi/register', payload)
+        const res = await api.post('/user/pdi/register', payload)
         router.push('/pdi')
       }catch(err){
         error.value = err.response?.data?.error || err.message
@@ -100,7 +100,7 @@ export default {
 
     onMounted(async () => {
       try {
-        const { data } = await api.get('/pdi/me')
+        const { data } = await api.get('/user/pdi/me')
         const existing = data.pdiItems || []
         rows.value = existing
           .filter(item => !item.id)

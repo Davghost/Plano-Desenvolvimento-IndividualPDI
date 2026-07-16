@@ -51,7 +51,7 @@ export default {
       loading.value = true
       error.value = ''
       try{
-        const res = await api.get('/pdi/me')
+        const res = await api.get('/user/pdi/me')
         pdiItems.value = res.data.pdiItems || []
       }catch(err){
         pdiItems.value = []
