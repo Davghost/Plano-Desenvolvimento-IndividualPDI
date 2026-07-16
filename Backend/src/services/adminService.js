@@ -86,5 +86,6 @@ export async function getUserPDI(userId) {
             orderBy: { theme: 'asc' }
         })
     ]);
+    console.log(items)
     return [user_data, buildFullPdiItems(items, userId)];
 }

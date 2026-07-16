@@ -1,28 +1,32 @@
 <template>
-  <div style="max-width:800px;margin:24px auto;">
+  <div class="pdi-list-container">
     <h2>Meus PDIs</h2>
-    <div style="margin-bottom:12px;">
+    <div class="pdi-list-actions">
       <router-link to="/pdi/register">Preencher temas do PDI</router-link>
-      <button type="button" @click="logout" style="margin-left:12px;">Sair</button>
+      <button type="button" @click="logout">Sair</button>
     </div>
 
-    <div v-if="loading">Carregando...</div>
-    <p v-else-if="error" style="color:red">{{ error }}</p>
+    <div v-if="loading" class="pdi-loading">Carregando...</div>
+    <p v-else-if="error" class="pdi-error">{{ error }}</p>
     <div v-else>
-      <div v-if="registeredItems.length===0">Nenhum item PDI preenchido.</div>
-      <ul>
-        <li v-for="item in pdiItems" :key="item.theme" style="margin-bottom:10px;border:1px solid #ddd;padding:8px;">
+      <div v-if="registeredItems.length===0" class="pdi-empty">Nenhum item PDI preenchido.</div>
+      <ul class="pdi-list" v-else>
+        <li v-for="item in pdiItems" :key="item.theme">
           <strong>{{ item.theme }}</strong>
           <template v-if="item.id">
-            <div>Objetivo: {{ item.objective }}</div>
-            <div>Por que: {{ item.why }}</div>
-            <div>Como: {{ item.how }}</div>
-            <div>Período: {{ item.period }}</div>
-            <div>Responsável: {{ item.who }}</div>
-            <div style="margin-top:6px;"><router-link :to="`/pdi/update/${item.theme}`">Editar</router-link></div>
+            <div class="pdi-list-item-filled">
+              <div><strong>Objetivo:</strong> {{ item.objective }}</div>
+              <div><strong>Por que:</strong> {{ item.why }}</div>
+              <div><strong>Como:</strong> {{ item.how }}</div>
+              <div><strong>Período:</strong> {{ item.period }}</div>
+              <div><strong>Responsável:</strong> {{ item.who }}</div>
+            </div>
+            <div class="pdi-item-actions">
+              <router-link :to="`/pdi/update/${item.theme}`">Editar</router-link>
+            </div>
           </template>
           <template v-else>
-            <div style="margin-top:6px;">Tema ainda não preenchido.</div>
+            <div class="pdi-item-pending">Tema ainda não preenchido.</div>
           </template>
         </li>
       </ul>

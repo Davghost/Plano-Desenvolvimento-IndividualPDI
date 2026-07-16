@@ -1,39 +1,44 @@
 <template>
-  <div style="max-width:800px;margin:24px auto;">
+  <div class="pdi-update-container">
     <h2>Atualizar PDI - {{ theme }}</h2>
-    <div v-if="loading">Carregando...</div>
-    <p v-else-if="error && !found" style="color:red">{{ error }}</p>
-    <form v-else @submit.prevent="handleUpdate">
-      <div>
-        <label>Objetivo</label>
-        <input v-model="item.objective" required />
+    <div v-if="loading" class="pdi-update-loading">Carregando...</div>
+    <p v-else-if="error && !found" class="pdi-update-error">{{ error }}</p>
+    <form v-else @submit.prevent="handleUpdate" class="pdi-update-form">
+      <h3>Dados do PDI</h3>
+      
+      <div class="pdi-update-group">
+        <label for="objective">Objetivo</label>
+        <input id="objective" v-model="item.objective" required />
       </div>
-      <div>
-        <label>Why</label>
-        <input v-model="item.why" required />
+      <div class="pdi-update-group">
+        <label for="why">Por que</label>
+        <input id="why" v-model="item.why" required />
       </div>
-      <div>
-        <label>How</label>
-        <input v-model="item.how" required />
+      <div class="pdi-update-group">
+        <label for="how">Como</label>
+        <input id="how" v-model="item.how" required />
       </div>
-      <div>
-        <label>Período</label>
-        <select v-model="item.period" required>
+      <div class="pdi-update-group">
+        <label for="period">Período</label>
+        <select id="period" v-model="item.period" required>
           <option value="SEMANAL">SEMANAL</option>
           <option value="QUINZENAL">QUINZENAL</option>
           <option value="MENSAL">MENSAL</option>
           <option value="BIMESTRAL">BIMESTRAL</option>
         </select>
       </div>
-      <div>
-        <label>Who</label>
-        <input v-model="item.who" required />
+      <div class="pdi-update-group">
+        <label for="who">Responsável</label>
+        <input id="who" v-model="item.who" required />
       </div>
-      <div style="margin-top:8px;"><button type="submit" :disabled="saving">{{ saving ? 'Atualizando...' : 'Atualizar' }}</button></div>
+      
+      <div class="pdi-update-actions">
+        <button type="submit" :disabled="saving" class="pdi-btn-update">{{ saving ? 'Atualizando...' : 'Atualizar' }}</button>
+      </div>
     </form>
 
-    <div v-if="msg" style="color:green;margin-top:8px">{{ msg }}</div>
-    <div v-if="error" style="color:red;margin-top:8px">{{ error }}</div>
+    <div v-if="msg" class="pdi-update-success">{{ msg }}</div>
+    <div v-if="error" class="pdi-update-error">{{ error }}</div>
   </div>
 </template>
 

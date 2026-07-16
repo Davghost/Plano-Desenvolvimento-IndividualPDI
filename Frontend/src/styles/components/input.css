@@ -1,0 +1,119 @@
+/* ========================================
+   INPUTS ESPECIALIZADOS
+   ======================================== */
+
+.input-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: stretch;
+}
+
+.input-group input {
+  flex: 1;
+}
+
+.input-group button {
+  padding: 0 var(--spacing-lg);
+  min-width: 120px;
+}
+
+/* Input with Icon */
+.input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-wrapper input {
+  padding-left: 36px;
+}
+
+.input-icon-wrapper::before {
+  position: absolute;
+  left: 12px;
+  content: '';
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+/* Sr-only (Screen Reader Only) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Feedback Messages */
+.feedback {
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg) 0 0;
+  border-radius: var(--spacing-md);
+  font-size: var(--font-size-base);
+}
+
+.feedback.error {
+  background: var(--color-bg-error);
+  color: var(--color-error);
+  border: 1px solid var(--color-border-error);
+  border-left: 3px solid var(--color-error);
+  animation: shake 0.3s ease-in-out;
+}
+
+.feedback.success {
+  background: #f0fdf4;
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+  border-left: 3px solid var(--color-success);
+}
+
+.feedback.warning {
+  background: #fffbeb;
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+  border-left: 3px solid var(--color-warning);
+}
+
+.feedback.info {
+  background: var(--color-primary-lighter);
+  color: var(--color-info);
+  border: 1px solid var(--color-primary-light);
+  border-left: 3px solid var(--color-primary);
+}
+
+/* Loading State */
+.input-loading {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    animation: pulse 1.5s infinite;
+  }
+}
+
+@keyframes inputLoad {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}

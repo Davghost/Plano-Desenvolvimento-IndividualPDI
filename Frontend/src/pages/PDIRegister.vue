@@ -1,31 +1,35 @@
 <template>
-  <div style="max-width:900px;margin:24px auto;">
+  <div class="pdi-register-container">
     <h2>Registrar PDIs</h2>
-    <form @submit.prevent="handleSubmit">
-      <div v-for="(row, idx) in rows" :key="idx" style="border:1px solid #ddd;padding:12px;margin-bottom:8px;">
-        <div>
-          <label>Tema</label>
-          <select v-model="row.theme" required>
-            <option value="PROGRAMACAO">PROGRAMACAO</option>
-            <option value="MATEMATICA">MATEMATICA</option>
-            <option value="INGLES">INGLES</option>
-            <option value="SOFT_SKILLS">SOFT_SKILLS</option>
-            <option value="OPORTUNIDADES_ACADEMICAS">OPORTUNIDADES_ACADEMICAS</option>
-          </select>
+    <form @submit.prevent="handleSubmit" class="pdi-register-form">
+      <div v-for="(row, idx) in rows" :key="idx" class="pdi-register-section">
+        <div class="pdi-section-header">
+          <div class="pdi-section-title">
+            <label>Tema</label>
+            <select v-model="row.theme" required>
+              <option value="PROGRAMACAO">PROGRAMACAO</option>
+              <option value="MATEMATICA">MATEMATICA</option>
+              <option value="INGLES">INGLES</option>
+              <option value="SOFT_SKILLS">SOFT_SKILLS</option>
+              <option value="OPORTUNIDADES_ACADEMICAS">OPORTUNIDADES_ACADEMICAS</option>
+            </select>
+          </div>
+          <button type="button" :disabled="rows.length === 1" @click="removeRow(idx)" class="pdi-section-remove">Remover</button>
         </div>
-        <div>
+
+        <div class="pdi-form-group">
           <label>Objetivo</label>
           <input v-model="row.objective" required />
         </div>
-        <div>
+        <div class="pdi-form-group">
           <label>Why</label>
           <input v-model="row.why" required />
         </div>
-        <div>
+        <div class="pdi-form-group">
           <label>How</label>
           <input v-model="row.how" required />
         </div>
-        <div>
+        <div class="pdi-form-group">
           <label>Período</label>
           <select v-model="row.period" required>
             <option value="SEMANAL">SEMANAL</option>
@@ -34,22 +38,21 @@
             <option value="BIMESTRAL">BIMESTRAL</option>
           </select>
         </div>
-        <div>
+        <div class="pdi-form-group">
           <label>Who</label>
           <input v-model="row.who" required />
         </div>
-        <div style="margin-top:6px;"><button type="button" :disabled="rows.length === 1" @click="removeRow(idx)">Remover</button></div>
       </div>
 
-      <div>
-        <button type="button" :disabled="rows.length === themes.length" @click="addRow">Adicionar outro tema</button>
-      </div>
+      <button type="button" :disabled="rows.length === themes.length" @click="addRow" class="pdi-btn-add">Adicionar outro tema</button>
 
-      <div style="margin-top:12px;"><button type="submit" :disabled="saving || rows.length === 0">{{ saving ? 'Salvando...' : 'Salvar PDIs' }}</button></div>
+      <div class="pdi-form-actions">
+        <button type="submit" :disabled="saving || rows.length === 0" class="pdi-btn-submit">{{ saving ? 'Salvando...' : 'Salvar PDIs' }}</button>
+      </div>
     </form>
 
-    <div v-if="msg" style="margin-top:12px;color:green">{{ msg }}</div>
-    <div v-if="error" style="margin-top:12px;color:red">{{ error }}</div>
+    <div v-if="msg" class="pdi-message success">{{ msg }}</div>
+    <div v-if="error" class="pdi-message error">{{ error }}</div>
   </div>
 </template>
 

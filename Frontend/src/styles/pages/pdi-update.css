@@ -1,0 +1,178 @@
+/* ========================================
+   PÁGINA PDI UPDATE
+   ======================================== */
+
+.pdi-update-container {
+  max-width: 800px;
+  margin: var(--spacing-3xl) auto;
+  padding: 0 var(--spacing-lg) var(--spacing-3xl);
+}
+
+.pdi-update-container h2 {
+  margin-bottom: var(--spacing-2xl);
+  color: var(--color-text-primary);
+}
+
+.pdi-update-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+}
+
+.pdi-update-form h3 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--color-primary-lighter);
+}
+
+.pdi-update-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.pdi-update-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.pdi-update-group input,
+.pdi-update-group select {
+  padding: 12px 14px;
+  font-size: var(--font-size-base);
+  border: 1.5px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-secondary);
+  transition: all var(--transition-normal);
+  font-family: inherit;
+}
+
+.pdi-update-group input::placeholder,
+.pdi-update-group select::placeholder {
+  color: var(--color-text-light);
+}
+
+.pdi-update-group input:focus,
+.pdi-update-group select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+.pdi-update-actions {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.pdi-update-actions button {
+  padding: 12px 20px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: 1px solid;
+}
+
+.pdi-btn-update {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-text-inverse);
+  border-color: transparent;
+  min-width: 150px;
+}
+
+.pdi-btn-update:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(23, 105, 194, 0.3);
+}
+
+.pdi-btn-update:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pdi-btn-update:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.pdi-btn-cancel {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+}
+
+.pdi-btn-cancel:hover:not(:disabled) {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-primary);
+}
+
+.pdi-update-loading {
+  text-align: center;
+  padding: var(--spacing-3xl);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+}
+
+.pdi-update-loading::after {
+  content: '...';
+  animation: pulse 1.5s infinite;
+}
+
+.pdi-update-error {
+  display: block;
+  color: var(--color-error);
+  background: var(--color-bg-error);
+  border-left: 3px solid var(--color-error);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-lg);
+  animation: shake 0.3s ease-in-out;
+  font-size: var(--font-size-base);
+}
+
+.pdi-update-success {
+  display: block;
+  color: var(--color-success);
+  background: #f0fdf4;
+  border-left: 3px solid var(--color-success);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-lg);
+  font-size: var(--font-size-base);
+  animation: slideUp 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+  .pdi-update-actions {
+    flex-direction: column;
+    justify-content: stretch;
+  }
+
+  .pdi-update-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .pdi-update-container {
+    margin: var(--spacing-2xl) auto;
+    padding: 0 var(--spacing-md) var(--spacing-2xl);
+  }
+
+  .pdi-update-form {
+    padding: var(--spacing-lg);
+  }
+}
