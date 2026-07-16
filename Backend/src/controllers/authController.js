@@ -1,10 +1,10 @@
-import {register, login} from "../services/authService.js"
+import authService from "../services/authService.js"
 
-export async function registerController(req, res){
+async function registerController(req, res){
     try{
         const { name, email, turma, password} = req.body
 
-        const user = await register({
+        const user = await authService.register({
             name, email, turma, password
         })
 
@@ -24,11 +24,11 @@ export async function registerController(req, res){
     }
 }
 
-export async function loginController(req, res){
+async function loginController(req, res){
     try{
         const {email, password} = req.body
 
-        const result = await login({
+        const result = await authService.login({
             email, password
         })
         return res.json({
@@ -49,3 +49,6 @@ export async function loginController(req, res){
         })
 }   
 }
+
+
+export default {registerController, loginController}

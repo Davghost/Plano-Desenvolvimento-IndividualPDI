@@ -1,21 +1,13 @@
 import express from "express"
-
-import { validate } from "../middlewares/validateMiddlewares.js"
-import { authMiddleware, onlyUsers } from "../middlewares/authMiddleware.js"
-import { RegisterPDIController,  UpdatePDIController, GetMePDIController } from "../controllers/PDIController.js";
-import { pdiItemSchema, registerPDISchema, updatePDISchema } from "../validators/PDIValidator.js";
+import validate  from "../middlewares/validateMiddlewares.js"
+import Middlewares from "../middlewares/authMiddleware.js"
+import Pdi from "../controllers/PDIController.js";
 
 const router = express.Router()
 
-router.use(authMiddleware);
-router.use(onlyUsers);
-
-
-router.get("/me", GetMePDIController);
-
-router.post("/register",  RegisterPDIController);
-
-router.put("/update",  UpdatePDIController);
-
+router.use(Middlewares.authMiddleware, Middlewares.onlyUsers);
+router.get("/me", Pdi.GetMePDIController);
+router.post("/register",  Pdi.RegisterPDIController);
+router.put("/update",  Pdi.UpdatePDIController);
 
 export default router

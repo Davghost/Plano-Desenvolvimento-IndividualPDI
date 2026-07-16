@@ -1,6 +1,6 @@
-import { getAllUsersFiltered, getUserPDI} from '../services/adminService.js';
+import AdminPdiServices from '../services/adminService.js';
 
-export async function GetAllUsersFilter(req, res) {
+async function GetAllUsersFilter(req, res) {
     try {
         const { id, name, turma, pages } = req.query;
         const filters = {};
@@ -48,7 +48,7 @@ export async function GetAllUsersFilter(req, res) {
             filters.turma = turma.trim();
         }
 
-        const result = await getAllUsersFiltered(filters, page);
+        const result = await AdminPdiServices.getAllUsersFiltered(filters, page);
 
         if (result.total === 0) {
             return res.status(200).json({
@@ -70,17 +70,20 @@ export async function GetAllUsersFilter(req, res) {
     }
 }
 
-export async function getUserPDIController(req, res) {
+async function getUserPDIController(req, res) {
     try {
         const userId = parseInt(req.params.userId);
         if (isNaN(userId)) {
             return res.status(400).json({ error: "ID de usuário inválido",success: false });
         }
 
-        const pdiItems = await getUserPDI(userId);
+        const pdiItems = await AdminPdiServices.getUserPDI(userId);
         res.json(pdiItems);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Erro ao buscar PDI do usuário" });
     }
 }
+
+
+export default {GetAllUsersFilter, getUserPDIController};

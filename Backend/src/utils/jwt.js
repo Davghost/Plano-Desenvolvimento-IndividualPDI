@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-export function generateToken(user){
+export default function generateToken(user){
 
     if(!process.env.JWT_SECRET){
         throw new Error(

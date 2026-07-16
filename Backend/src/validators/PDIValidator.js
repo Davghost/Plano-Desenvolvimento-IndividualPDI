@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const pdiItemSchema = z.object({
+ const pdiItemSchema = z.object({
     
   theme: z.enum(
     ["PROGRAMACAO", "MATEMATICA", "INGLES", "SOFT_SKILLS", "OPORTUNIDADES_ACADEMICAS"],
@@ -19,7 +19,7 @@ export const pdiItemSchema = z.object({
   who: z.string().min(3, "Responsável deve ter no mínimo 3 caracteres")
 })
 
-export const registerPDISchema = z.object({
+const registerPDISchema = z.object({
   pdiItems: z.array(pdiItemSchema).min(1, "Deve haver pelo menos um item PDI")
 }).refine(
     (data) => {
@@ -32,10 +32,13 @@ export const registerPDISchema = z.object({
     }
 )
 
-export const updatePDISchema = pdiItemSchema
+ const updatePDISchema = pdiItemSchema
     .omit({ theme: true })
     .partial()
     .refine(
         (data) => Object.keys(data).length > 0,
         { message: "Envie ao menos um campo para atualizar" }
     )
+
+
+export default {pdiItemSchema, registerPDISchema, updatePDISchema};

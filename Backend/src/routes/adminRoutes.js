@@ -1,15 +1,15 @@
 import express from 'express';
-import { authMiddleware , adminOnly} from '../middlewares/authMiddleware.js';
-import { GetAllUsersFilter, getUserPDIController} from '../controllers/adminController.js';
+import Middlewares from '../middlewares/authMiddleware.js';
+import UsersForAdmin from "../controllers/adminController.js";
+import Notifications from '../controllers/notification.js';
 
 const router = express.Router();
 
 
-router.use(authMiddleware);
-router.use(adminOnly)
+router.use(Middlewares.authMiddleware, Middlewares.adminOnly);
+router.get('/filter', UsersForAdmin.GetAllUsersFilter);
+router.get('/users/filter', UsersForAdmin.GetAllUsersFilter);
+router.get('/users/:userId', UsersForAdmin.getUserPDIController);
+router.post("notification/create", Notifications.CreateNotificationController);
 
-router.get('/filter', GetAllUsersFilter);
-// Mantida temporariamente para clientes que ainda utilizam a rota anterior.
-router.get('/users/filter', GetAllUsersFilter);
-router.get('/users/:userId', getUserPDIController);
 export default router;

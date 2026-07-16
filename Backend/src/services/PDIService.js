@@ -1,5 +1,5 @@
-import  prisma  from "../lib/prisma.js"
-import { registerPDISchema, updatePDISchema } from "../validators/PDIValidator.js"
+import prisma from "../lib/prisma.js"
+import PdiSchemas from "../validators/PDIValidator.js";
 
 const PDI_THEMES = [
     "PROGRAMACAO",
@@ -27,8 +27,8 @@ function buildFullPdiItems(items, userId) {
     })
 }
 
-export async function RegisterPDIService(id_user, data) {
-	const parsed = registerPDISchema.safeParse(data)
+async function RegisterPDIService(id_user, data) {
+	const parsed = PdiSchemas.registerPDISchema.safeParse(data)
 	if (!parsed.success) {
 		const messages = parsed.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(' | ')
 		const validationError = new Error(`Dados inválidos: ${messages}`)
@@ -39,7 +39,7 @@ export async function RegisterPDIService(id_user, data) {
 	try {
 
         //retorna {sucess: boolean, data: {...}}
-		const parsed = registerPDISchema.safeParse(data)
+		const parsed = PdiSchemas.registerPDISchema.safeParse(data)
 
 		if (!parsed.success) {
 			const messages = parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(' | ')
@@ -93,7 +93,7 @@ export async function RegisterPDIService(id_user, data) {
 
 }
 
-export async function UpdatePDIService(id_user, items) {
+async function UpdatePDIService(id_user, items) {
     // items: array de objetos no formato { theme: string, data: object }
 
     const updated = []
@@ -103,7 +103,7 @@ export async function UpdatePDIService(id_user, items) {
 
         try {
             // valida os dados de atualização desse item específico
-            const parsed = updatePDISchema.safeParse(item.data)
+            const parsed = PdiSchemas.updatePDISchema.safeParse(item.data)
 			console.log("parsed")
 			console.log(parsed)
             if (!parsed.success) {
@@ -141,7 +141,7 @@ export async function UpdatePDIService(id_user, items) {
     return { success: errors.length === 0, updated, errors }
 }
 
-export async function GetPDIService(id_user) {
+async function GetPDIService(id_user) {
     try {
         const items = await prisma.pdiItem.findMany({ where: { userId: id_user } })
         return { success: true, pdiItems: buildFullPdiItems(items, id_user) }
@@ -149,3 +149,7 @@ export async function GetPDIService(id_user) {
         throw new Error(err.message)
     }
 }
+
+
+
+export default {RegisterPDIService, UpdatePDIService, GetPDIService};

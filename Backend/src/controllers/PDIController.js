@@ -1,13 +1,13 @@
-import { RegisterPDIService, GetPDIService, UpdatePDIService } from "../services/PDIService.js";
+import PdiService from "../services/PDIService.js";
 
 
-export async function RegisterPDIController(req, res) {
+async function RegisterPDIController(req, res) {
     const user_id = req.user?.sub;
     if (!user_id) {
         return res.status(500).json({ error: "Erro interno do servidor", success: false });
     }
     try {
-        const response = await RegisterPDIService(user_id, req.body);
+        const response = await PdiService.RegisterPDIService(user_id, req.body);
         return res.status(201).json(response);
     }
     catch (error) {
@@ -16,7 +16,7 @@ export async function RegisterPDIController(req, res) {
     }
 }
 
-export async function UpdatePDIController(req, res) {
+async function UpdatePDIController(req, res) {
     const id_user = req.user?.sub;
 
     if (!id_user) {
@@ -30,7 +30,7 @@ export async function UpdatePDIController(req, res) {
 
     console.log(bodyItems.map(data => ({ data })));
 
-    const result = await UpdatePDIService(id_user, bodyItems.map(data => ({ data })));
+    const result = await PdiService.UpdatePDIService(id_user, bodyItems.map(data => ({ data })));
     console.log(result)
 
     if (!result.success) {
@@ -47,7 +47,7 @@ export async function UpdatePDIController(req, res) {
     });
 }
 
-export async function GetMePDIController(req, res) {
+async function GetMePDIController(req, res) {
     const user_id = req.user.sub;
     if (!user_id) {
         return res.status(500).json({
@@ -56,7 +56,7 @@ export async function GetMePDIController(req, res) {
         });
     }
     try {
-        const response = await GetPDIService(user_id);
+        const response = await PdiService.GetPDIService(user_id);
         console.log(response)
 
         return res.status(200).json({
@@ -71,3 +71,6 @@ export async function GetMePDIController(req, res) {
         });
     }
 }
+
+
+export default {RegisterPDIController, UpdatePDIController, GetMePDIController};

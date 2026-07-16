@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs"
 import prisma from "../lib/prisma.js"
-import { generateToken } from "../utils/jwt.js"
+import  generateToken  from "../utils/jwt.js"
 
-export async function register(data) {
+async function register(data) {
     const {name, email, turma, password} = data
 
     const normalizedEmail = email.toLowerCase().trim()
@@ -36,7 +36,7 @@ export async function register(data) {
     return user
 }
 
-export async function login(data){
+async function login(data){
     const {email, password} = data
 
     const normalizedEmail = email.toLowerCase().trim()
@@ -76,3 +76,6 @@ export async function login(data){
         safeUser, token
     }
 }
+
+
+export default {register, login};

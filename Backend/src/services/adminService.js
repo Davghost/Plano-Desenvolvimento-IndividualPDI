@@ -26,7 +26,7 @@ function buildFullPdiItems(items, userId) {
     })
 }
 
-export async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
+async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
     const { id, name, turma } = filters;
 
     const where = { role: "user" };
@@ -70,7 +70,7 @@ export async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
     };  
 };
 
-export async function getUserPDI(userId) {
+async function getUserPDI(userId) {
     const [user_data, items] = await Promise.all([
         prisma.user.findUnique({
             where: {id: userId},
@@ -88,3 +88,6 @@ export async function getUserPDI(userId) {
     ]);
     return [user_data, buildFullPdiItems(items, userId)];
 }
+
+
+export default {getAllUsersFiltered, getUserPDI};

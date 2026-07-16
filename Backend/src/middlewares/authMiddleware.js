@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
 import prisma from "../lib/prisma.js"
 
-export function authMiddleware(req, res, next){
+function authMiddleware(req, res, next){
     const authHeader = req.headers.authorization
 
     if(!authHeader){
@@ -30,7 +30,7 @@ export function authMiddleware(req, res, next){
     }
 }
 
-export function onlyUsers(req, res, next){
+function onlyUsers(req, res, next){
     
     if(!req.user){
         return res.status(401).json({
@@ -46,9 +46,12 @@ export function onlyUsers(req, res, next){
     next();
 }
 
-export function adminOnly(req, res, next){
+function adminOnly(req, res, next){
     if (req.user.role !== 'admin') {
         return res.status(403).json({ error: "Acesso restrito a administradores" });
     }
     next();
 };
+
+
+export default {authMiddleware, onlyUsers, adminOnly};
