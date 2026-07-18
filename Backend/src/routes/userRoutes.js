@@ -10,7 +10,6 @@ router.use(Middlewares.authMiddleware, Middlewares.onlyUsers);
 router.get("/pdi/me", Pdi.GetMePDIController);
 router.post("/pdi/register",  Pdi.RegisterPDIController);
 router.put("/pdi/update",  Pdi.UpdatePDIController);
-
-router.get("/notification/me", Notifications.GetNotificationByidController);
+router.get("/notification/me", Notifications.GetNotificationMeController);
 
 export default router

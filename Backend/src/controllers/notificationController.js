@@ -1,16 +1,16 @@
 import notificationService from "../services/notificationService.js"
-
+import WebPush from "../utils/webpush.js"
 
 async function CreateNotificationController(req, res) {
     try {
         let { user_id, link, message } = req.body;
-
-        if (!user_id) {
-            return res.status(400).json({ error: "user_id é obrigatório", success : false});
+        user_id = parseInt(user_id, 10);
+        if (!user_id || isNaN(user_id)) {
+            return res.status(400).json({ error: "O ID fornecido é inválido.", success: false });
         }
 
         if (!link) {
-            return res.status(400).json({ error: "link é obrigatório", success : false});
+            return res.status(400).json({ error: "link é obrigatório!", success : false});
         }
 
         if (!message) {
@@ -21,7 +21,8 @@ async function CreateNotificationController(req, res) {
             link,
             message,
         });
-
+        const data = {title : message, link : link};
+        await WebPush(data);
         return res.status(201).json({ data: notification, success: true });
     } catch (error) {
         return res.status(400).json({ error: error.message, success : false});
@@ -43,6 +44,9 @@ async function UpdateNotificationController(req, res) {
             link: link || undefined,
             message: message || undefined,
         });
+        
+        const data = {title : message, link : link};
+        await WebPush(data);
 
         return res.status(200).json({ data: notification, success: true });
     } catch (error) {
@@ -66,15 +70,12 @@ async function DeleteNotificationController(req, res) {
     }
 }
 
-async function GetNotificationsController(req, res) {
+
+async function GetNotificationMeController(req, res) {
     try {
-        const id_user = Number(req.params.id);
+        const id_user = req.user.sub;
 
-        if (!id_user || isNaN(id_user)) {
-            return res.status(400).json({ error: "id_user é obrigatório", success: false });
-        }
-
-        const notifications = await notificationService.GetNotificationsService(id_user);
+        const notifications = await notificationService.GetNotificationByidUserService(id_user);
 
         return res.status(200).json({ data: notifications, success: true });
     } catch (error) {
@@ -83,27 +84,66 @@ async function GetNotificationsController(req, res) {
 }
 
 
-async function GetNotificationByidController(req, res) {
-    let id_user = null;
+async function GetAllNotificationsController(req, res) {
     try {
-        if(!req.path == "/notification/me"){
-            id_user = Number(req.params.id);
+        const notifications = await notificationService.GetAllNotificationsService();
 
-            if (!id_user || isNaN(id_user)) {
-                return res.status(400).json({ error: "id_user é obrigatório", success: false });
+        return res.status(200).json({ notifications, success: true });
+    } catch (error) {
+        return res.status(400).json({ error: error.message, success: false });
+    }
+}
+
+async function GetNotificationByFilterController(req, res) {
+    try {
+        const { id, message, link, user_id } = req.query;
+
+        const filters = {};
+
+        if (id !== undefined) {
+            const parsedId = Number(id);
+            if (Number.isNaN(parsedId)) {
+                return res.status(400).json({ message: "O campo 'id' deve ser um número válido." });
             }
-        }
-        else{
-            id_user = req.user.sub;
+            filters.id = parsedId;
         }
 
+        if (message !== undefined) {
+            if (typeof message !== "string" || message.trim() === "") {
+                return res.status(400).json({ message: "O campo 'message' deve ser uma string válida." });
+            }
+            filters.message = message.trim();
+        }
 
-        const notifications = await notificationService.GetNotificationsService(id_user);
+        if (link !== undefined) {
+            if (typeof link !== "string" || link.trim() === "") {
+                return res.status(400).json({ message: "O campo 'link' deve ser uma string válida." });
+            }
+            filters.link = link.trim();
+        }
+        if (user_id !== undefined) {
+            const parsedUserId = Number(user_id);
+            if (Number.isNaN(parsedUserId)) {
+                return res.status(400).json({ message: "O campo 'user_id' deve ser um número válido." });
+            }
+            filters.userId = parsedUserId;
+        }
 
-        return res.status(200).json({ data: notifications, success: true });
+        const notifications = await notificationService.GetNottificationsByFilterService(filters);
+
+        return res.status(200).json(notifications);
     } catch (error) {
-        return res.status(400).json({ error: error.message, success: false });
+        console.error("Erro ao buscar notificações por filtro:", error);
+        return res.status(500).json({ message: "Erro interno ao buscar notificações." });
     }
 }
 
-export default {CreateNotificationController, UpdateNotificationController, DeleteNotificationController, GetNotificationByidController};
+
+export default {
+    CreateNotificationController,
+    UpdateNotificationController,
+    DeleteNotificationController,
+    GetNotificationMeController,
+    GetAllNotificationsController,
+    GetNotificationByFilterController
+};

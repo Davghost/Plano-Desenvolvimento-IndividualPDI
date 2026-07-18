@@ -22,7 +22,6 @@ async function CreateNotificationService(id_user, data) {
                 expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
             },
         });
-
         return notification;
     } catch (error) {
         console.error("Erro ao criar notificação:", error);
@@ -60,7 +59,7 @@ async function DeleteNotificationService(id_notification) {
     }
 }
 
-async function GetNotificationsService(id_user) {
+async function GetNotificationByidUserService(id_user) {
     try {
         await prisma.notification.deleteMany({
             where: {
@@ -81,4 +80,49 @@ async function GetNotificationsService(id_user) {
     }
 }
 
-export default {CreateNotificationService, UpdateNotificationService, DeleteNotificationService, GetNotificationsService};
+async function GetAllNotificationsService() {
+    try {
+        await prisma.notification.deleteMany({
+            where: {
+                expiresAt: { lte: new Date() },
+            },
+        });
+
+        const notifications = await prisma.notification.findMany({
+            orderBy: { created_at: "desc" },
+        });
+
+        return notifications;
+    } catch (error) {
+        console.error("Erro ao buscar notificações:", error);
+        throw error;
+    }
+}
+
+async function GetNottificationsByFilterService(filters) {
+    try {
+        const notifications = await prisma.notification.findMany({
+            where: {
+                id: filters.id,
+                userId : filters.userId,
+                message: filters.message,
+                link: filters.link,
+            },
+            orderBy: { created_at: "desc" },
+        });
+
+        return notifications;
+    } catch (error) {
+        console.error("Erro ao buscar notificações:", error);
+        throw error;
+    }
+}
+
+export default {
+    CreateNotificationService,
+    UpdateNotificationService,
+    DeleteNotificationService,
+    GetNotificationByidUserService,
+    GetAllNotificationsService,
+    GetNottificationsByFilterService
+};
