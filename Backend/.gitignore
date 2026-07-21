@@ -1,8 +1,4 @@
-node_modules
-/src/generated/prisma
+node_modules/
 .env
+.txt
 .http
-dev.db
-pdifire.json
-pdi-webpush-firebase-adminsdk-fbsvc-7b089b7e33.json
-dev.db

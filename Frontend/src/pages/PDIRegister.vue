@@ -7,12 +7,14 @@
           <div class="pdi-section-title">
             <label>Tema</label>
             <select v-model="row.theme" required>
-              <option value="PROGRAMACAO">PROGRAMACAO</option>
-              <option value="MATEMATICA">MATEMATICA</option>
-              <option value="INGLES">INGLES</option>
-              <option value="SOFT_SKILLS">SOFT_SKILLS</option>
-              <option value="OPORTUNIDADES_ACADEMICAS">OPORTUNIDADES_ACADEMICAS</option>
-            </select>
+  <option
+    v-for="theme in availableThemes(row.theme)"
+    :key="theme"
+    :value="theme"
+  >
+    {{ theme }}
+  </option>
+</select>
           </div>
           <button type="button" :disabled="rows.length === 1" @click="removeRow(idx)" class="pdi-section-remove">Remover</button>
         </div>
@@ -55,63 +57,147 @@
     <div v-if="error" class="pdi-message error">{{ error }}</div>
   </div>
 </template>
-
 <script>
-import api from '../services/api'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import api from "../services/api";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
-  setup(){
-    const rows = ref([])
-    const msg = ref('')
-    const error = ref('')
-    const saving = ref(false)
-    const router = useRouter()
+  setup() {
+    const router = useRouter();
 
-    function addRow(){
-      const availableTheme = themes.find(theme => !rows.value.some(row => row.theme === theme))
-      if (availableTheme) rows.value.push({ theme: availableTheme, objective: '', why: '', how: '', period: 'SEMANAL', who: '' })
-    }
-    function removeRow(i){
-      rows.value.splice(i,1)
+    const rows = ref([]);
+    const registeredThemes = ref([]);
+
+    const msg = ref("");
+    const error = ref("");
+    const saving = ref(false);
+
+    const themes = [
+      "PROGRAMACAO",
+      "MATEMATICA",
+      "INGLES",
+      "SOFT_SKILLS",
+      "OPORTUNIDADES_ACADEMICAS",
+    ];
+
+    function availableThemes(currentTheme = null) {
+      return themes.filter((theme) => {
+
+        if (theme === currentTheme) return true;
+
+        if (registeredThemes.value.includes(theme)) {
+          return false;
+        }
+
+        return !rows.value.some((row) => row.theme === theme);
+      });
     }
 
-    async function handleSubmit(){
-      msg.value = ''
-      error.value = ''
-      if (new Set(rows.value.map(row => row.theme)).size !== rows.value.length) {
-        error.value = 'Cada item deve ter um tema diferente.'
-        return
+    function addRow() {
+      const theme = availableThemes()[0];
+
+      if (!theme) return;
+
+      rows.value.push({
+        theme,
+        objective: "",
+        why: "",
+        how: "",
+        period: "SEMANAL",
+        who: "",
+      });
+    }
+
+    function removeRow(index) {
+      rows.value.splice(index, 1);
+
+      if (!rows.value.length && availableThemes().length) {
+        addRow();
       }
-      saving.value = true
-      try{
-        const payload = { pdiItems: rows.value }
-        const res = await api.post('/user/pdi/register', payload)
-        router.push('/pdi')
-      }catch(err){
-        error.value = err.response?.data?.error || err.message
-      }finally {
-        saving.value = false
-      }
     }
 
-    const themes = ['PROGRAMACAO', 'MATEMATICA', 'INGLES', 'SOFT_SKILLS', 'OPORTUNIDADES_ACADEMICAS']
+    async function handleSubmit() {
+      msg.value = "";
+      error.value = "";
+
+      if (!rows.value.length) {
+        error.value = "Adicione pelo menos um PDI.";
+        return;
+      }
+
+      const duplicated =
+        new Set(rows.value.map((r) => r.theme)).size !== rows.value.length;
+
+      if (duplicated) {
+        error.value = "Cada tema só pode aparecer uma vez.";
+        return;
+      }
+
+      saving.value = true;
+
+      try {
+
+        await api.post("/user/pdi/register", {
+          pdiItems: rows.value,
+        });
+
+        router.push("/pdi");
+
+      } catch (err) {
+
+        error.value =
+          err.response?.data?.error ||
+          "Erro ao registrar os PDIs.";
+
+      } finally {
+        saving.value = false;
+      }
+    }
 
     onMounted(async () => {
-      try {
-        const { data } = await api.get('/user/pdi/me')
-        const existing = data.pdiItems || []
-        rows.value = existing
-          .filter(item => !item.id)
-          .map(item => ({ theme: item.theme, objective: '', why: '', how: '', period: 'SEMANAL', who: '' }))
-        if (!rows.value.length) msg.value = 'Todos os temas já foram preenchidos. Você pode editá-los na lista.'
-      } catch (err) {
-        error.value = err.response?.data?.error || 'Não foi possível carregar os temas disponíveis.'
-      }
-    })
 
-    return { rows, themes, addRow, removeRow, handleSubmit, msg, error, saving }
-  }
-}
+      try {
+
+        const { data } = await api.get("/user/pdi/me");
+
+        const items = data.data.pdiItems || [];
+
+        registeredThemes.value = items
+          .filter(item => item.id !== null)
+          .map(item => item.theme);
+
+        if (registeredThemes.value.length === themes.length) {
+
+          msg.value =
+            "Todos os temas já foram cadastrados. Você pode editá-los na lista.";
+
+          return;
+        }
+
+        addRow();
+
+      } catch (err) {
+
+        error.value =
+          err.response?.data?.error ||
+          "Não foi possível carregar os temas.";
+
+      }
+
+    });
+
+    return {
+      rows,
+      themes,
+      msg,
+      error,
+      saving,
+      addRow,
+      removeRow,
+      handleSubmit,
+      availableThemes,
+    };
+  },
+};
 </script>

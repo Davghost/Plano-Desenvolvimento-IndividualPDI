@@ -1,93 +1,149 @@
-import prisma from '../lib/prisma.js';
+import db from "../config/supabase.js"
+import bcrypt from "bcryptjs";
 
-const PDI_THEMES = [
-    "PROGRAMACAO",
-    "MATEMATICA",
-    "INGLES",
-    "SOFT_SKILLS",
-    "OPORTUNIDADES_ACADEMICAS"
-]
 
-function buildFullPdiItems(items, userId) {
-    const itemMap = new Map(items.map(item => [item.theme, item]))
+async function GetAllUsersService(page = 1, limit = 8) {
 
-    return PDI_THEMES.map(theme => {
-        const item = itemMap.get(theme)
-        return {
-            id: item?.id ?? null,
-            userId: item?.userId ?? userId,
-            theme,
-            objective: item?.objective ?? "",
-            why: item?.why ?? "",
-            how: item?.how ?? "",
-            period: item?.period ?? null,
-            who: item?.who ?? ""
-        }
-    })
-}
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
 
-async function getAllUsersFiltered(filters = {}, page = 1, limit = 8) {
-    const { id, name, turma } = filters;
+    const { data: users, error, count } = await db
+        .from("users")
+        .select(
+            `
+            id,
+            name,
+            email,
+            turma,
+            role
+            `,
+            { count: "exact" }
+        )
+        .eq("role", "user")
+        .order("id", { ascending: true })
+        .range(from, to);
 
-    const where = { role: "user" };
-
-    const skip = (page - 1) * limit;
-
-    if (id !== undefined) {
-        where.id = id;
+    if (error) {
+        throw new Error(error.message);
     }
-
-    if (name !== undefined) {
-        where.name = { contains: name};
-    }
-
-    if (turma !== undefined) {
-        where.turma = { contains: turma};
-    }
-
-    const [users, total] = await Promise.all([
-        prisma.user.findMany({
-            where,
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                turma: true,
-                role: true,
-            },
-            skip,
-            take: limit,
-            orderBy: { id: 'asc' }
-        }),
-        prisma.user.count({
-            where
-        })
-    ]);
 
     return {
         users,
-        total
-    };  
-};
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit)
+    };
+}
 
-async function getUserPDI(userId) {
-    const [user_data, items] = await Promise.all([
-        prisma.user.findUnique({
-            where: {id: userId},
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                turma: true,
+async function GetAllUsersFiltered(filters = {}, page = 1, limit = 8){
+
+    const { id, name, turma } = filters;
+
+    let query = db
+        .from("users")
+        .select(
+            `
+            id,
+            name,
+            email,
+            turma,
+            role
+            `,
+            {
+                count:"exact"
             }
-        }),
-        prisma.pdiItem.findMany({
-            where: { userId },
-            orderBy: { theme: 'asc' }
-        })
-    ]);
-    return [user_data, buildFullPdiItems(items, userId)];
+        )
+        .eq("role","user");
+
+
+    if(id !== undefined){
+        query = query.eq("id", id);
+    }
+
+
+    if(name !== undefined){
+        query = query.ilike("name", `%${name}%`);
+    }
+
+
+    if(turma !== undefined){
+        query = query.ilike("turma", `%${turma}%`);
+    }
+
+
+    const { count, error: countError } = await query;
+
+
+    if(countError){
+        throw new Error(countError.message);
+    }
+
+
+    const totalPages = Math.ceil(count / limit);
+
+
+    if(page > totalPages && totalPages !== 0){
+
+        return {
+            users: [],
+            total: count,
+            page,
+            limit,
+            totalPages
+        };
+
+    }
+
+
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+
+    const {
+        data: users,
+        error
+    } = await query
+        .order("id", {ascending:true})
+        .range(from,to);
+
+
+    if(error){
+        throw new Error(error.message);
+    }
+
+
+    return {
+        users,
+        total: count,
+        page,
+        limit,
+        totalPages
+    };
 }
 
 
-export default {getAllUsersFiltered, getUserPDI};
+async function ResetPasswordService(id_user, password) {
+    const hash = await bcrypt.hash(password, 10);
+
+    const { data, error } = await db
+        .from("users")
+        .update({ password: hash })
+        .eq("id", id_user)
+        .eq("role", "admin")
+        .select()
+        .single();
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    return data;
+}
+
+
+export default {
+    GetAllUsersService,
+    GetAllUsersFiltered,
+    ResetPasswordService
+};

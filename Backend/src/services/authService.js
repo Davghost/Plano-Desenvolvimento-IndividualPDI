@@ -1,67 +1,91 @@
-import bcrypt from "bcryptjs"
-import prisma from "../lib/prisma.js"
-import  generateToken  from "../utils/jwt.js"
+import bcrypt from "bcryptjs";
+import db from "../config/supabase.js";
+import generateToken from "../utils/jwt.js";
 
-async function register(data) {
-    const {name, email, turma, password} = data
+async function RegisterService(payload) {
+    const {
+        name,
+        email,
+        turma,
+        password
+    } = payload;
 
-    const normalizedEmail = email.toLowerCase().trim()
+    const emailNorm = email.trim().toLowerCase();
 
-    const existingUser = await prisma.user.findUnique({
-        where:{email: normalizedEmail}})
+    const { data: existingUser, error: findError } = await db
+        .from("users")
+        .select("id")
+        .eq("email", emailNorm)
+        .maybeSingle();
 
-    if(existingUser){
-        throw new Error("EMAIL_EXISTS")
+    if (findError) {
+        throw findError;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    if (existingUser) {
+        throw new Error("EMAIL_EXISTS");
+    }
 
-    const user = await prisma.user.create({
-        data:{
+    const passHash = await bcrypt.hash(password, 10);
+
+    const { data: user, error: insertError } = await db
+        .from("users")
+        .insert({
             name,
-            email: normalizedEmail,
+            email: emailNorm,
             turma,
-            password: hashedPassword,
+            password: passHash,
             role: "user"
-        },
-        select:{
-            id:true,
-            name:true,
-            email:true,
-            turma: true,
-            role: true,
-            created_at: true
-        }
-    })
-    return user
+        })
+        .select(`
+            id,
+            name,
+            email,
+            turma,
+            role,
+            created_at
+        `)
+        .single();
+
+    if (insertError) {
+        throw insertError;
+    }
+
+    return user;
 }
 
-async function login(data){
-    const {email, password} = data
+async function LoginService(payload) {
+    const {
+        email,
+        password
+    } = payload;
 
-    const normalizedEmail = email.toLowerCase().trim()
+    const emailNorm = email.trim().toLowerCase();
 
-    const user = await prisma.user.findUnique({
-        where:{
-            email: normalizedEmail
-        }
-    })
+    const { data: user, error } = await db
+        .from("users")
+        .select("*")
+        .eq("email", emailNorm)
+        .maybeSingle();
 
-    if(!user){
-        throw new Error(
-            "INVALID_CREDENTIALS"
-        )
+    if (error) {
+        throw error;
     }
 
-    const passwordMatches = await bcrypt.compare(password, user.password)
-
-    if(!passwordMatches){
-        throw new Error(
-            "INVALID_CREDENTIALS"
-        )
+    if (!user) {
+        throw new Error("INVALID_CREDENTIALS");
     }
 
-    const token = generateToken(user)
+    const passwordMatches = await bcrypt.compare(
+        password,
+        user.password
+    );
+
+    if (!passwordMatches) {
+        throw new Error("INVALID_CREDENTIALS");
+    }
+
+    const token = generateToken(user);
 
     const safeUser = {
         id: user.id,
@@ -70,12 +94,15 @@ async function login(data){
         turma: user.turma,
         role: user.role,
         created_at: user.created_at
-    }
+    };
 
     return {
-        safeUser, token
-    }
+        safeUser,
+        token
+    };
 }
 
-
-export default {register, login};
+export default {
+    RegisterService,
+    LoginService
+};

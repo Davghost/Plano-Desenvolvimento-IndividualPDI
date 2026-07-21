@@ -1,9 +1,9 @@
 <template>
   <router-view />
+  <ToastContainer />
 </template>
 
-<script>
-export default {
-  name: 'App'
-}
+<script setup>
+import ToastContainer from "@/components/ToastContainer.vue";
 </script>
+

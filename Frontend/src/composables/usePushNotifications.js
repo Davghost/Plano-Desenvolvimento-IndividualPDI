@@ -1,14 +1,19 @@
 // src/composables/usePushNotifications.js
-import { ref } from "vue";
-//maybe "firebase/messaging"
+import { ref, onMounted } from "vue";
 import { getToken, onMessage } from "firebase/messaging";
 import { getMessagingIfSupported } from "../firebase/config.js";
 import api from "@/services/api"; // sua instância axios configurada
+import { useToast } from "./useToast.js";
 
 export function usePushNotifications() {
-  const permissionState = ref(Notification.permission); // "default" | "granted" | "denied"
+  const permissionState = ref(
+    typeof window !== "undefined" && "Notification" in window
+      ? Notification.permission
+      : "default"
+  );
   const fcmToken = ref(null);
   const error = ref(null);
+  const { showToast } = useToast();
 
   async function enableNotifications() {
     try {
@@ -35,9 +40,6 @@ export function usePushNotifications() {
         serviceWorkerRegistration: registration,
       });
 
-      console.log("debug")
-      console.log(token)
-
       if (!token) {
         error.value = "Não foi possível gerar o token de notificação.";
         return;
@@ -45,22 +47,24 @@ export function usePushNotifications() {
 
       fcmToken.value = token;
 
-      // Envia o token para o backend salvar no banco (via Prisma)
-      await api.post(
-        "api/push/register-token", 
-        { token },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("pdi_token")}`
+      // Envia o token para o backend salvar no banco se o usuário estiver logado
+      const authToken = localStorage.getItem("pdi_token");
+      if (authToken) {
+        await api.post(
+          "api/push/register-token", 
+          { token },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`
+            }
           }
-        }
-      );
+        );
+      }
 
       // Notificações recebidas com o app aberto (foreground)
       onMessage(messaging, (payload) => {
         const { title, body } = payload.notification || {};
-        // Aqui você pode usar seu próprio sistema de toast/snackbar
-        new Notification(title, { body });
+        showToast(title, body, "info");
       });
     } catch (err) {
       console.error(err);
@@ -68,5 +72,52 @@ export function usePushNotifications() {
     }
   }
 
-  return { permissionState, fcmToken, error, enableNotifications };
+  async function unregisterPushToken() {
+    try {
+      const messaging = await getMessagingIfSupported();
+      if (!messaging) return;
+
+      const registration = await navigator.serviceWorker.register(
+        "/firebase-messaging-sw.js"
+      );
+
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+        serviceWorkerRegistration: registration,
+      });
+
+      if (token) {
+        const authToken = localStorage.getItem("pdi_token");
+        if (authToken) {
+          await api.delete("api/push/unregister-token", {
+            data: { token },
+            headers: {
+              Authorization: `Bearer ${authToken}`
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao remover token no logout:", err);
+    }
+  }
+
+  // Se a permissão já foi concedida, inicializa o registro e a escuta automaticamente ao montar
+  onMounted(async () => {
+    if (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      Notification.permission === "granted"
+    ) {
+      await enableNotifications();
+    }
+  });
+
+  return {
+    permissionState,
+    fcmToken,
+    error,
+    enableNotifications,
+    unregisterPushToken,
+  };
 }

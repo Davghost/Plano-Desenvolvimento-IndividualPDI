@@ -1,19 +1,21 @@
-import express from 'express';
-import Middlewares from '../middlewares/authMiddleware.js';
-import UsersForAdmin from "../controllers/adminController.js";
-import Notifications from '../controllers/notificationController.js';
+import express from "express";
+import Middlewares from "../middlewares/authMiddleware.js";
+import Controllers from "../controllers/adminController.js";
 
-const router = express.Router();
+const adminRoute = express.Router();
+adminRoute.use(Middlewares.authMiddleware, Middlewares.adminOnly);
 
+adminRoute.get("/users/all", Controllers.GetAllUsersController);
+adminRoute.get("/users/pdi/:id", Controllers.GetPDIByIdController);
+adminRoute.get("/users/filter", Controllers.GetAllUsersFilter);
 
-router.use(Middlewares.authMiddleware, Middlewares.adminOnly);
-router.get('/filter', UsersForAdmin.GetAllUsersFilter);
-router.get('/users/filter', UsersForAdmin.GetAllUsersFilter);
-router.get('/users/:userId', UsersForAdmin.getUserPDIController);
+adminRoute.post("/user/reset-password", Controllers.ResetPasswordUserController);
+adminRoute.post("/reset-password", Controllers.ResetPasswordAdminController);
 
-router.post("/notification/create", Notifications.CreateNotificationController);
-router.put("/notification/update/:id", Notifications.UpdateNotificationController);
-router.delete("/notification/delete/:id", Notifications.DeleteNotificationController);
-router.get("/notification/user/:id", Notifications.GetNotificationByidController);
+adminRoute.post("/notification/create", Controllers.CreateNotificationController);
+adminRoute.put("/notification/update/:id", Controllers.UpdateNotificationController);
+adminRoute.delete("/notification/delete/:id", Controllers.DeleteNotificationController);
+adminRoute.get("/notification/all", Controllers.GetAllNotificationsController);
+adminRoute.get("/notification/filter", Controllers.GetNotificationByFilterController);
 
-export default router;
+export default adminRoute;

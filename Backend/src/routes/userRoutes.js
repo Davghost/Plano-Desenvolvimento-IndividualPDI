@@ -1,16 +1,12 @@
-import express from "express"
-import validate  from "../middlewares/validateMiddlewares.js"
+import express from "express";
 import Middlewares from "../middlewares/authMiddleware.js"
-import Pdi from "../controllers/PDIController.js";
-import Notifications from '../controllers/notificationController.js';
+import Controllers from "../controllers/userController.js"
+const userRoute = express.Router();
 
-const router = express.Router()
+userRoute.use(Middlewares.authMiddleware, Middlewares.onlyUsers);
 
-router.use(Middlewares.authMiddleware, Middlewares.onlyUsers);
-router.get("/pdi/me", Pdi.GetMePDIController);
-router.post("/pdi/register",  Pdi.RegisterPDIController);
-router.put("/pdi/update",  Pdi.UpdatePDIController);
+userRoute.post("/pdi/register", Controllers.RegisterPdiController);
+userRoute.put("/pdi/update", Controllers.UpdatePdiController);
+userRoute.get("/pdi/me", Controllers.GetPdisController);
 
-router.get("/notification/me", Notifications.GetNotificationByidController);
-
-export default router
+export default userRoute;

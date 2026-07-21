@@ -1,54 +1,60 @@
-import authService from "../services/authService.js"
+import services from "../services/authService.js";
+import cache from "../cache/cache.js"
 
-async function registerController(req, res){
-    try{
-        const { name, email, turma, password} = req.body
+async function RegisterController(req, res) {
+    try {
+        const result = await services.RegisterService(req.body);
+        cache.delByPrefix("users:");
+        return res.status(201).json({
+            success: true,
+            data: result,
+        });
+    } catch (error) {
+        console.error(error);
 
-        const user = await authService.register({
-            name, email, turma, password
-        })
+        switch (error.message) {
+            case "EMAIL_EXISTS":
+                return res.status(409).json({
+                    success: false,
+                    error: "Email já cadastrado.",
+                });
 
-        return res.status(201).json(user)
-    }catch(error){
-        if(error.message==="EMAIL_EXISTS"){
-            return res.status(409).json({
-                error: "Email já cadastrado"
-            })
+            default:
+                return res.status(500).json({
+                    success: false,
+                    error: "Erro interno do servidor.",
+                });
         }
-
-        console.log(error)
-        return res.status(500).json(
-            {error: "Erro interno do servidor"}
-        )
-
     }
 }
 
-async function loginController(req, res){
-    try{
-        const {email, password} = req.body
+async function LoginController(req, res) {
+    try {
+        const result = await services.LoginService(req.body);
 
-        const result = await authService.login({
-            email, password
-        })
-        return res.json({
-            message: "Login efetuado com sucesso",
-            ...result
-        })
-    }catch(error){
-        if(error.message==="INVALID_CREDENTIALS"){
-            return res.status(401).json({
-                error: "Credenciais inválidas"
-            })
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (error) {
+        switch (error.message) {
+            case "INVALID_CREDENTIALS":
+                return res.status(401).json({
+                    success: false,
+                    error: "Email ou senha inválidos.",
+                });
+
+            default:
+                console.error(error);
+                return res.status(500).json({
+                    success: false,
+                    error: "Erro interno do servidor.",
+                });
         }
-
-        console.log(error)
-
-        return res.status(500).json({
-            error: "Erro interno do servidor"
-        })
-}   
+    }
 }
 
-
-export default {registerController, loginController}
+export default {
+    RegisterController,
+    LoginController,
+};

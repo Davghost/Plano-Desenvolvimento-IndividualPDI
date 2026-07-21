@@ -30,7 +30,65 @@
   margin-bottom: 0;
 }
 
-/* Filters */
+/* ========================================
+   ADMIN TABS
+   ======================================== */
+
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--color-border-light);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.tab-button {
+  position: relative;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.tab-button:hover {
+  color: var(--color-primary);
+  background: var(--color-primary-lighter);
+}
+
+.tab-button.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background: var(--color-primary-lighter);
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+/* ========================================
+   FILTERS (shared)
+   ======================================== */
+
 .filters {
   display: grid;
   grid-template-columns: 130px minmax(180px, 1fr) minmax(160px, 0.7fr) auto;
@@ -38,7 +96,15 @@
   align-items: end;
 }
 
-.filters label {
+.filters-notif {
+  display: grid;
+  grid-template-columns: 120px 120px minmax(160px, 1fr) minmax(140px, 0.8fr) auto;
+  gap: var(--spacing-lg);
+  align-items: end;
+}
+
+.filters label,
+.filters-notif label {
   display: grid;
   gap: var(--spacing-sm);
   font-size: var(--font-size-sm);
@@ -46,7 +112,9 @@
 }
 
 .filters input,
-.filters select {
+.filters select,
+.filters-notif input,
+.filters-notif select {
   box-sizing: border-box;
   width: 100%;
   border: 1px solid var(--color-border-light);
@@ -58,7 +126,9 @@
 }
 
 .filters input:focus,
-.filters select:focus {
+.filters select:focus,
+.filters-notif input:focus,
+.filters-notif select:focus {
   outline: 3px solid var(--color-primary-light);
   outline-offset: 2px;
   border-color: var(--color-primary);
@@ -71,7 +141,10 @@
   flex-wrap: wrap;
 }
 
-/* Pagination */
+/* ========================================
+   PAGINATION
+   ======================================== */
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -110,7 +183,10 @@
   cursor: not-allowed;
 }
 
-/* PDI Panel */
+/* ========================================
+   PDI PANEL
+   ======================================== */
+
 .pdi-panel {
   margin-top: var(--spacing-2xl);
 }
@@ -209,7 +285,10 @@
   margin-top: var(--spacing-md);
 }
 
-/* Results */
+/* ========================================
+   RESULTS
+   ======================================== */
+
 .results {
   margin-top: var(--spacing-xl);
 }
@@ -218,6 +297,8 @@
   display: flex;
   justify-content: space-between;
   gap: var(--spacing-lg);
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
 
   > div {
     flex: 1;
@@ -235,6 +316,302 @@
   }
 }
 
+.results-heading .heading-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   USER TABLE ACTIONS (notif button)
+   ======================================== */
+
+.notify-button {
+  padding: 5px var(--spacing-md);
+  border: 1px solid var(--color-primary-light);
+  background: var(--color-primary-lighter);
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.notify-button:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+}
+
+/* ========================================
+   NOTIFICATION FORM PANEL
+   ======================================== */
+
+.notif-form-panel {
+  margin-top: var(--spacing-2xl);
+  animation: slideInUp 0.25s ease;
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif-form-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+}
+
+.notif-form-heading > div .eyebrow {
+  margin-bottom: var(--spacing-sm);
+}
+
+.notif-form-heading > div h2 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.notif-form-heading > div p {
+  margin-bottom: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.notif-form {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.form-row.full {
+  grid-template-columns: 1fr;
+}
+
+.form-field {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.form-field label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.form-field input,
+.form-field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: 9px 10px;
+  font: inherit;
+  background: var(--color-bg-primary);
+  transition: all var(--transition-normal);
+  resize: vertical;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: 3px solid var(--color-primary-light);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+}
+
+.form-field input:disabled {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+.form-field .field-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ========================================
+   NOTIFICATION TABLE
+   ======================================== */
+
+.notif-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+}
+
+.notif-table-wrapper table {
+  width: 100%;
+}
+
+.notif-table-wrapper table th:last-child,
+.notif-table-wrapper table td:last-child {
+  min-width: 140px;
+}
+
+.notif-table-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.edit-button {
+  padding: 5px var(--spacing-md);
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.edit-button:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.delete-button {
+  padding: 5px var(--spacing-md);
+  border: 1px solid transparent;
+  background: #fef2f1;
+  color: var(--color-error);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.delete-button:hover {
+  background: var(--color-error);
+  color: #fff;
+}
+
+.delete-button:disabled,
+.edit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   STATUS BADGES
+   ======================================== */
+
+.status-active {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: #d1fae5;
+  color: var(--color-success);
+  white-space: nowrap;
+}
+
+.status-expired {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* ========================================
+   POLLING INDICATOR
+   ======================================== */
+
+.poll-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.poll-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ========================================
+   FEEDBACK
+   ======================================== */
+
+.feedback {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.feedback.error {
+  color: var(--color-error);
+}
+
+.feedback.success {
+  color: var(--color-success);
+}
+
+.inline-success {
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin-left: auto;
+}
+
+.inline-error {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  margin-left: auto;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 960px) {
+  .filters-notif {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filters-notif label:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 768px) {
   .page-shell {
     margin-top: var(--spacing-2xl);
@@ -249,6 +626,10 @@
     grid-template-columns: 1fr;
   }
 
+  .filters-notif {
+    grid-template-columns: 1fr;
+  }
+
   .filter-actions {
     margin-top: var(--spacing-md);
   }
@@ -259,6 +640,15 @@
 
   .results-heading {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-tabs {
+    overflow-x: auto;
   }
 }
 

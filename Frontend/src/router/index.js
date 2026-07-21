@@ -10,7 +10,7 @@ const routes = [
   { path: '/login', component: Login, meta: { guestOnly: true } },
   { path: '/pdi', component: PDIList, meta: { requiresAuth: true, role: 'user' } },
   { path: '/pdi/register', component: PDIRegister, meta: { requiresAuth: true, role: 'user' } },
-  { path: '/pdi/update/:theme', component: PDIUpdate, props: true, meta: { requiresAuth: true, role: 'user' } },
+  { path: '/pdi/update', component: PDIUpdate, props: true, meta: { requiresAuth: true, role: 'user' } },
   { path: '/admin', component: () => import('../pages/AdminUsers.vue'), meta: { requiresAuth: true, role: 'admin' } }
 ]
 

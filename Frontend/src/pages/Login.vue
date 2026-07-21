@@ -53,22 +53,37 @@ export default {
     const router = useRouter()
 
     async function handleLogin(){
-      error.value = ''
-      loading.value = true
-      try{
-        const res = await api.post('/auth/login', { email: email.value, password: password.value })
-        const { token, safeUser } = res.data
-        if (!token || !safeUser) throw new Error('Resposta de autenticação inválida.')
-        setAuthToken(token)
-        setCurrentUser(safeUser)
-        router.push(safeUser.role === 'admin' ? '/admin' : '/pdi')
-      }catch(err){
-        error.value = err.response?.data?.error || err.message
-      }finally{
-        loading.value = false
-      }
-    }
+    error.value = ''
+    loading.value = true
+    try {
+      const res = await api.post('/auth/login', { email: email.value, password: password.value })
+      
+      // O axios coloca a resposta dentro de 'res.data'
+      // O seu JSON retorna 'success' e 'data' no primeiro nível
+      const { success, data } = res.data
+      
+      // (Opcional) Você pode validar se o success veio true
+      if (!success) throw new Error('Falha na autenticação.')
 
-    return { email, password, handleLogin, error, loading }
+      // Agora extraímos o token e o safeUser de dentro do objeto 'data'
+      const { token, safeUser } = data
+
+      if (!token || !safeUser) throw new Error('Resposta de autenticação inválida.')
+      
+      setAuthToken(token)
+      setCurrentUser(safeUser)
+      
+      // Usamos safeUser direto agora, em vez de data.safeUser
+      router.push(safeUser.role === 'admin' ? '/admin' : '/pdi')
+      
+    } catch(err) {
+      // Mantivemos a sua captura de erro (ajuste err.response?.data?.message se necessário)
+      error.value = err.response?.data?.error || err.message
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { email, password, handleLogin, error, loading }
   }
 }</script>

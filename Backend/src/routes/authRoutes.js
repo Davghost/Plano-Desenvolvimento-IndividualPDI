@@ -1,12 +1,12 @@
-import express from "express"
-import auth from "../controllers/authController.js"
-import validators from "../validators/authValidator.js"
-import  validate  from "../middlewares/validateMiddlewares.js"
+import express from "express";
+import schema from "../validators/authValidator.js";
+import Middlewares from "../middlewares/authMiddleware.js"
+import validate from "../middlewares/validateMiddleware.js";
+import Controllers from "../controllers/authController.js"
 
-const router = express.Router()
+const authRoute = express.Router();
 
+authRoute.post("/register",Middlewares.adminOnly, validate(schema.registerSchema), Controllers.RegisterController);
+authRoute.post("/login", validate(schema.loginSchema), Controllers.LoginController);
 
-router.post("/register", validate(validators.registerSchema), auth.registerController)
-router.post("/login", validate(validators.loginSchema), auth.loginController)
-
-export default router
+export default authRoute;
